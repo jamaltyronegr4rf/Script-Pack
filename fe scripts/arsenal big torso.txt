@@ -1,0 +1,31 @@
+function getnames()
+    for i, v in pairs(game:GetChildren()) do
+        if v.ClassName == "Players" then
+            return v.Name
+        end
+    end
+end
+local players = getnames()
+local LP = game:GetService("Players").LocalPlayer
+coroutine.resume(
+    coroutine.create(
+        function()
+            while wait(1) do
+                coroutine.resume(
+                    coroutine.create(
+                        function()
+                            for _, v in pairs(game:GetService("Players"):GetPlayers()) do
+                                if v.Name ~= LP.Name and v.Character.UpperTorso.Color ~= LP.Character.UpperTorso.Color then
+                                    v.Character.LowerTorso.CanCollide = false
+                                    v.Character.LowerTorso.Material = "Neon"
+                                    v.Character.LowerTorso.Size = Vector3.new(30, 30, 30)
+                                    v.Character.HumanoidRootPart.Size = Vector3.new(30, 30, 30)
+                                end
+                            end
+                        end
+                    )
+                )
+            end
+        end
+    )
+)

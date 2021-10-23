@@ -1,0 +1,1097 @@
+HumanDied = false
+local CountSCIFIMOVIELOL = 1
+function SCIFIMOVIELOL(Part0,Part1,Position,Angle)
+	local AlignPos = Instance.new('AlignPosition', Part1); AlignPos.Name = "AliP_"..CountSCIFIMOVIELOL
+	AlignPos.ApplyAtCenterOfMass = true;
+	AlignPos.MaxForce = 5772000--67752;
+	AlignPos.MaxVelocity = math.huge/9e110;
+	AlignPos.ReactionForceEnabled = false;
+	AlignPos.Responsiveness = 200;
+	AlignPos.RigidityEnabled = false;
+	local AlignOri = Instance.new('AlignOrientation', Part1); AlignOri.Name = "AliO_"..CountSCIFIMOVIELOL
+	AlignOri.MaxAngularVelocity = math.huge/9e110;
+	AlignOri.MaxTorque = 5772000
+	AlignOri.PrimaryAxisOnly = false;
+	AlignOri.ReactionTorqueEnabled = false;
+	AlignOri.Responsiveness = 200;
+	AlignOri.RigidityEnabled = false;
+	local AttachmentA=Instance.new('Attachment',Part1); AttachmentA.Name = "Ath_"..CountSCIFIMOVIELOL
+	local AttachmentB=Instance.new('Attachment',Part0); AttachmentB.Name = "Ath_"..CountSCIFIMOVIELOL
+	AttachmentA.Orientation = Angle or Vector3.new(0,0,0)
+	AttachmentA.Position = Position or Vector3.new(0,0,0)
+	AlignPos.Attachment1 = AttachmentA;
+	AlignPos.Attachment0 = AttachmentB;
+	AlignOri.Attachment1 = AttachmentA;
+	AlignOri.Attachment0 = AttachmentB;
+	CountSCIFIMOVIELOL = CountSCIFIMOVIELOL + 1
+	return {AlignPos,AlignOri,AttachmentA,AttachmentB}
+end
+
+if _G.netted ~= true then
+	_G.netted = true
+	coroutine.wrap(function()
+		settings().Physics.PhysicsEnvironmentalThrottle = Enum.EnviromentalPhysicsThrottle.Disabled
+		settings().Physics.AllowSleep = false
+		game:GetService("RunService").RenderStepped:Connect(function()
+			game:FindFirstChildOfClass("Players").LocalPlayer.MaximumSimulationRadius=math.pow(math.huge,math.huge)
+			sethiddenproperty(game:FindFirstChildOfClass("Players").LocalPlayer,"SimulationRadius",math.huge*math.huge)
+		end)
+	end)()
+end
+
+game:FindFirstChildOfClass("Players").LocalPlayer["Character"].Archivable = true
+local hatnameclone = {}
+for _,v in next, game:FindFirstChildOfClass("Players").LocalPlayer["Character"]:GetChildren() do
+	if v:IsA("Accessory") then
+		if hatnameclone[v.Name] then
+			if hatnameclone[v.Name] == "s" then
+				hatnameclone[v.Name] = {}
+			end
+			table.insert(hatnameclone[v.Name],v)
+		else
+			hatnameclone[v.Name] = "s"
+		end
+	end
+end
+for _,v in pairs(hatnameclone) do
+	if type(v) == "table" then
+		local num = 1
+		for _,w in pairs(v) do
+			w.Name = w.Name..num
+			num = num + 1
+		end
+	end
+end
+hatnameclone = nil
+
+local DeadChar = game:FindFirstChildOfClass("Players").LocalPlayer.Character
+
+local fldr = Instance.new("Folder",game:FindFirstChildOfClass("Players").LocalPlayer["Character"])
+fldr.Name = "DMYF"
+local CloneChar = DeadChar:Clone()
+local ANIMATIONHERE
+if CloneChar:FindFirstChild("Animate") then
+	ANIMATIONHERE = CloneChar:FindFirstChild("Animate"):Clone()
+	CloneChar:FindFirstChild("Animate"):Destroy()
+end
+if CloneChar:FindFirstChildOfClass("Folder") then CloneChar:FindFirstChildOfClass("Folder"):Destroy() end
+if CloneChar.Torso:FindFirstChild("Neck") then
+	local Clonessss = CloneChar.Torso:FindFirstChild("Neck"):Clone()
+	Clonessss.Part0 = nil
+	Clonessss.Part1 = DeadChar.Head
+	Clonessss.Parent = DeadChar.Torso
+end
+CloneChar.Parent = fldr
+CloneChar.HumanoidRootPart.CFrame = DeadChar.HumanoidRootPart.CFrame
+CloneChar.Humanoid.BreakJointsOnDeath = false
+CloneChar.Name = "non"
+CloneChar.Humanoid.DisplayDistanceType = "None"
+
+for _,v in next, DeadChar:GetChildren() do
+	if v:IsA("Accessory") then
+		local topacc = false
+		if v.Handle:FindFirstChildOfClass("Weld") then v.Handle:FindFirstChildOfClass("Weld"):Destroy() end
+		v.Handle.Massless = true
+		v.Handle.CanCollide = false
+		if v.Handle:FindFirstChildOfClass("Attachment") then
+			local ath__ = v.Handle:FindFirstChildOfClass("Attachment")
+			if ath__.Name == "HatAttachment" or ath__.Name == "HairAttachment" or ath__.Name == "FaceFrontAttachment" or ath__.Name == "FaceCenterAttachment" then
+				topacc = ath__.Name
+			end
+		end
+        local bv = Instance.new("BodyVelocity",v.Handle)
+		bv.Velocity = Vector3.new(0,0,0)
+		coroutine.wrap(function()
+			if topacc then
+				local allthings = SCIFIMOVIELOL(v.Handle,DeadChar.Torso,Vector3.new(0,1.5,0)+ (DeadChar.Head[topacc].Position + (v.Handle[topacc].Position*-1)),Vector3.new(0,0,0))
+				local normaltop = allthings[1].Attachment1
+				local alipos = allthings[1]
+				local alirot = allthings[2]
+				local p0 = v.Handle
+				local p1 = DeadChar.Head
+				alipos.Parent = CloneChar:FindFirstChild(v.Name).Handle
+				alirot.Parent = CloneChar:FindFirstChild(v.Name).Handle
+				while true do
+					game:GetService("RunService").RenderStepped:wait()
+					if HumanDied then break end
+					coroutine.wrap(function()
+						if alipos.Attachment1 == normaltop then
+							p0.CFrame = p0.CFrame:lerp((((DeadChar.Torso.CFrame * CFrame.new(0,1.5,0)) * p1[topacc].CFrame) * p0[topacc].CFrame:inverse()),1)
+						else
+							v.Handle.CFrame = v.Handle.CFrame:lerp(alipos.Attachment1.Parent.CFrame * CFrame.new(alipos.Attachment1.Position) * CFrame.Angles(math.rad(alipos.Attachment1.Rotation.X),math.rad(alipos.Attachment1.Rotation.Y),math.rad(alipos.Attachment1.Rotation.Z)),1)
+						end
+					end)()
+				end
+			else
+				SCIFIMOVIELOL(v.Handle,CloneChar[v.Name].Handle,Vector3.new(0,0,0),Vector3.new(0,0,0))
+			end
+		end)()
+    end
+end
+
+local a = DeadChar.Torso
+local b = DeadChar.HumanoidRootPart
+local c = DeadChar.Humanoid
+a.Parent = game:FindFirstChildOfClass("Workspace")
+c.Parent = game:FindFirstChildOfClass("Workspace")
+local told = a:Clone()
+local told1 = c:Clone()
+b["RootJoint"].Part0 = told
+b["RootJoint"].Part1 = DeadChar.Head
+a.Name = "torso"
+a.Neck:Destroy()
+c.Name = "Mizt Hub Best"
+told.Parent = DeadChar
+told1.Parent = DeadChar
+DeadChar.PrimaryPart = told
+told1.Health = 0
+b:Destroy()
+a.Parent = DeadChar
+c.Parent = DeadChar
+told:Destroy()
+told1:Destroy()
+a.Name = "Torso"
+
+if CloneChar.Head:FindFirstChildOfClass("Decal") then CloneChar.Head:FindFirstChildOfClass("Decal").Transparency = 1 end
+if DeadChar:FindFirstChild("Animate") then DeadChar:FindFirstChild("Animate"):Destroy() end
+
+local Collider
+function UnCollide()
+    if HumanDied then Collider:Disconnect(); return end
+    --[[for _,Parts in next, CloneChar:GetChildren() do
+        if Parts:IsA("BasePart") then
+            Parts.CanCollide = false 
+        end 
+    end]]
+    for _,Parts in next, DeadChar:GetChildren() do
+        if Parts:IsA("BasePart") then
+        Parts.CanCollide = false
+        end 
+    end 
+end
+Collider = game:GetService("RunService").Stepped:Connect(UnCollide)
+
+local resetBindable = Instance.new("BindableEvent")
+resetBindable.Event:connect(function()
+    game:GetService("StarterGui"):SetCore("ResetButtonCallback", true)
+	resetBindable:Destroy()
+	HumanDied = true
+    pcall(function()
+		game:FindFirstChildOfClass("Players").LocalPlayer.Character = DeadChar
+		DeadChar.Head:Destroy()
+		DeadChar:FindFirstChildOfClass("Humanoid"):Destroy()
+		game:FindFirstChildOfClass("Players").LocalPlayer.Character = CloneChar
+		if DeadChar:FindFirstChildOfClass("Folder") then DeadChar:FindFirstChildOfClass("Folder"):Destroy() end
+	end)
+end)
+game:GetService("StarterGui"):SetCore("ResetButtonCallback", resetBindable)
+
+coroutine.wrap(function()
+    while true do
+        game:GetService("RunService").RenderStepped:wait()
+        if not CloneChar or not CloneChar:FindFirstChild("Head") or not CloneChar:FindFirstChildOfClass("Humanoid") or CloneChar:FindFirstChildOfClass("Humanoid").Health <= 0 and not DeadChar or not DeadChar:FindFirstChild("Head") or not DeadChar:FindFirstChildOfClass("Humanoid") or DeadChar:FindFirstChildOfClass("Humanoid").Health <= 0 then 
+            HumanDied = true
+            pcall(function()
+				game:FindFirstChildOfClass("Players").LocalPlayer.Character = DeadChar
+				DeadChar.Head:Destroy()
+				DeadChar:FindFirstChildOfClass("Humanoid"):Destroy()
+				game:FindFirstChildOfClass("Players").LocalPlayer.Character = CloneChar
+				if DeadChar:FindFirstChildOfClass("Folder") then DeadChar:FindFirstChildOfClass("Folder"):Destroy() end
+			end)
+            if resetBindable then
+                game:GetService("StarterGui"):SetCore("ResetButtonCallback", true)
+                resetBindable:Destroy()
+            end
+            break
+        end		
+    end
+end)()
+
+
+SCIFIMOVIELOL(DeadChar["Head"],CloneChar["Head"])
+SCIFIMOVIELOL(DeadChar["Torso"],CloneChar["Torso"])
+SCIFIMOVIELOL(DeadChar["Left Arm"],CloneChar["Left Arm"])
+SCIFIMOVIELOL(DeadChar["Right Arm"],CloneChar["Right Arm"])
+SCIFIMOVIELOL(DeadChar["Left Leg"],CloneChar["Left Leg"])
+SCIFIMOVIELOL(DeadChar["Right Leg"],CloneChar["Right Leg"])
+
+for _,v in pairs(DeadChar:GetChildren()) do
+	if v:IsA("BasePart") and v.Name ~= "Head" then
+		--[[local bv = Instance.new("BodyVelocity",v)
+		bv.Velocity = Vector3.new(0,0,0)
+		coroutine.wrap(function()
+			while true do
+				game:GetService("RunService").RenderStepped:wait()
+				if HumanDied then break end
+				v.CFrame = CloneChar[v.Name].CFrame
+			end
+		end)()]]
+	elseif v:IsA("BasePart") and v.Name == "Head" then
+		local bv = Instance.new("BodyVelocity",v)
+		bv.Velocity = Vector3.new(0,0,0)
+		coroutine.wrap(function()
+			while true do
+				game:GetService("RunService").RenderStepped:wait()
+				if HumanDied then break end
+				v.CFrame = DeadChar.Torso.CFrame * CFrame.new(0,1.5,0)
+			end
+		end)()
+	end
+end
+
+for _,BodyParts in next, CloneChar:GetDescendants() do
+if BodyParts:IsA("BasePart") or BodyParts:IsA("Part") then
+BodyParts.Transparency = 1 end end
+game:GetService("RunService").RenderStepped:wait()
+game:FindFirstChildOfClass("Players").LocalPlayer.Character = CloneChar
+game:FindFirstChildOfClass("Workspace"):FindFirstChildOfClass("Camera").CameraSubject = CloneChar.Humanoid
+
+for _,v in next, DeadChar:GetChildren() do
+	if v:IsA("Accessory") then
+		if v.Handle:FindFirstChildOfClass("Weld") then v.Handle:FindFirstChildOfClass("Weld"):Destroy() end
+	end
+end
+
+Player = game.Players.LocalPlayer
+repeat wait() until Player.Character
+
+local scriptName = "Oni"
+local stopped=false
+
+local Song = nil
+
+local BaccupMusicID = 2377141094
+local BaccupVolume = 5
+
+local TimePos = 0
+
+spawn(function()
+	game:GetService("RunService").Heartbeat:Connect(function()
+		if Song == nil then
+			Song = Instance.new("Sound",Player.Character.Torso)
+			Song.SoundId = "rbxassetid://"..BaccupMusicID
+			Song.Looped = true
+			Song.Volume = BaccupVolume
+			Song.RollOffMode = Enum.RollOffMode.LinearSquare
+			Song.TimePosition = TimePos
+			Song:Resume()
+		end
+		TimePos =  Song.TimePosition
+	end)	
+end)
+
+function WaitForChildOfClass(where,class,timeout)
+	local start = tick();
+	local ret;
+	repeat ret=where:FindFirstChildOfClass(class) wait() until ret or tick()-start>=(timeout or 15)
+	if(not ret)then warn("timeout") repeat wait()until nil else return ret end
+end
+
+local GUID = {}
+do
+	GUID.IDs = {};
+	function GUID:new(len)
+		local id;
+		if(not len)then
+			id = (tostring(function() end))
+			id = id:gsub("function: ","")
+		else
+			local function genID(len)
+				local newID = ""
+				for i = 1,len do
+					newID = newID..string.char(math.random(48,90))
+				end
+				return newID
+			end
+			repeat id = genID(len) until not GUID.IDs[id]
+			local oid = id;
+			id = {Trash=function() GUID.IDs[oid]=nil; end;Get=function() return oid; end}
+			GUID.IDs[oid]=true;
+		end
+		return id
+	end
+end
+
+local instanceID = GUID:new()
+
+
+local GUID = {}
+do
+	GUID.IDs = {};
+	function GUID:new(len)
+		local id;
+		if(not len)then
+			id = (tostring(function() end))
+			id = id:gsub("function: ","")
+		else
+			local function genID(len)
+				local newID = ""
+				for i = 1,len do
+					newID = newID..string.char(math.random(48,90))
+				end
+				return newID
+			end
+			repeat id = genID(len) until not GUID.IDs[id]
+			local oid = id;
+			id = {Trash=function() GUID.IDs[oid]=nil; end;Get=function() return oid; end}
+			GUID.IDs[oid]=true;
+		end
+		return id
+	end
+end
+
+
+local fakeEvent = function()
+	local t = {_fakeEvent=true,Waited={},Connected={}}
+	t.Connect = function(self,f)
+		local ft={}
+		ft={Disconnected=false;disconnect=function(s) if(self.Function==ft)then self.Function=nil end s.Disconnected=true end}
+		ft.Disconnect=ft.disconnect
+		
+		ft.Func=function(...)
+			for id,_ in next, t.Waited do 
+				t.Waited[id] = true 
+			end 
+			return f(...)
+		end; 
+		
+		table.insert(self.Connected,ft)
+		return ft;
+	end
+	t.connect = t.Connect
+	t.Wait = function() 
+		local guid = GUID:new(25)
+		local waitingId = guid:Get()
+		t.Waited[waitingId]=false
+		repeat wait() until t.Waited[waitingId]==true  
+		t.Waited[waitingId]=nil;
+		guid:Trash()
+	end
+	t.wait = t.Wait
+	return t
+end
+
+local m = {Target=nil,Hit=CFrame.new(),KeyUp=fakeEvent(),KeyDown=fakeEvent(),Button1Up=fakeEvent(),Button1Down=fakeEvent()}
+local UsIS = {InputBegan=fakeEvent(),InputEnded=fakeEvent()}
+local function te(self,ev,...)
+	local t = self[ev]
+	if t and t._fakeEvent and t.Connected then
+		for i,v in next, t.Connected do
+			if(v.Func and not v.Disconnected)then
+				v.Func(...)
+			else
+				t.Connected[i]=nil
+			end
+		end
+	end
+end
+m.TrigEvent = te
+UsIS.TrigEvent = te
+
+NewInstance = function(instance,parent,properties)
+	local inst = Instance.new(instance)
+	inst.Parent = parent
+	if(properties)then
+		for i,v in next, properties do
+			pcall(function() inst[i] = v end)
+		end
+	end
+	return inst;
+end
+
+local CF={N=CFrame.new,A=CFrame.Angles}
+
+local Head = Player.Character:WaitForChild'Head'
+local Torso = Player.Character:WaitForChild'Torso'
+local LArm = Player.Character:WaitForChild'Left Arm'
+local RArm = Player.Character:WaitForChild'Right Arm'
+local LLeg = Player.Character:WaitForChild'Left Leg'
+local RLeg = Player.Character:WaitForChild'Right Leg'
+local Root = Player.Character:WaitForChild'HumanoidRootPart'
+
+function newMotor(P0,P1,C0,C1)
+	return NewInstance('Motor',P0,{Part0=P0,Part1=P1,C0=C0,C1=C1})
+end
+
+local welds = {}
+local vars = {}
+local Hit = {}
+
+
+
+table.insert(welds,Torso.Neck)
+table.insert(welds,Root.RootJoint)
+table.insert(welds,Torso["Right Hip"])
+table.insert(welds,Torso["Right Shoulder"])
+table.insert(welds,Torso["Left Hip"])
+table.insert(welds,Torso["Left Shoulder"])
+
+vars.WeldDefaults={}
+for i = 1,#welds do
+	local v=welds[i]
+	vars.WeldDefaults[i]=v.C0
+end
+
+function GetTorso(char)
+	return char:FindFirstChild'Torso' or char:FindFirstChild'UpperTorso' or char:FindFirstChild'LowerTorso' or char:FindFirstChild'HumanoidRootPart'
+end
+
+
+
+-- MODIFIABLE STUFF --
+
+
+
+-- STOP MODIFIABLE STUFF --
+local signals = {} -- for l8r (stop commands, etc)
+local scripts = {}
+
+function BreakSignal(signalOrName)
+	for name,signal in next, signals do
+		if(typeof(signalOrName)~='RBXScriptSignal' and name==signalOrName or signal==signalOrName)then
+			signal:disconnect()
+			signals[name]=nil
+			break
+		end
+	end	
+end
+local Hum;
+repeat wait() Hum=Player.Character:FindFirstChildOfClass'Humanoid' until Hum
+for _,v in next, Hum:GetPlayingAnimationTracks() do
+	v:Stop(0);
+end
+
+
+
+
+
+
+
+
+Player.Chatted:connect(function(msg)
+	local msg2 = msg:lower()
+	if string.sub(msg2,1,15)==";switch regular"then
+		Song.SoundId = "rbxassetid://2377141094"
+		Song.Volume = 1
+	end
+	if string.sub(msg2,1,13)==";switch lunar"then
+		Song.SoundId = "rbxassetid://561833161"
+		Song.Volume = 1
+	end
+	if string.sub(msg2,1,12)==";switch smug"then
+		Song.SoundId = "rbxassetid://2784478072"
+		Song.Volume = 1
+	end
+	if string.sub(msg2,1,12)==";switch nothing"then
+		Song.Volume = 0
+	end
+end)
+
+--// Shortcut Variables \\--
+local S = setmetatable({},{__index = function(s,i) return game:service(i) end})
+local CF = {N=CFrame.new,A=CFrame.Angles,fEA=CFrame.fromEulerAnglesXYZ}
+local C3 = {tRGB= function(c3) return c3.r*255,c3.g*255,c3.b*255 end,N=Color3.new,RGB=Color3.fromRGB,HSV=Color3.fromHSV,tHSV=Color3.toHSV}
+local V3 = {N=Vector3.new,FNI=Vector3.FromNormalId,A=Vector3.FromAxis}
+local M = {C=math.cos,R=math.rad,S=math.sin,P=math.pi,RNG=math.random,MRS=math.randomseed,H=math.huge,RRNG = function(min,max,div) return math.rad(math.random(min,max)/(div or 1)) end}
+local R3 = {N=Region3.new}
+local De = S.Debris
+local WS = workspace
+local Lght = S.Lighting
+local RepS = S.ReplicatedStorage
+local IN = Instance.new
+local Plrs = S.Players
+
+
+local Player = game.Players.LocalPlayer
+local Char = game.Players.LocalPlayer.Character
+local Mouse = Player:GetMouse()
+local Hum = Char:FindFirstChildOfClass'Humanoid'
+local Torso = Char.Torso
+local RArm = Char["Right Arm"]
+local LArm = Char["Left Arm"]
+local RLeg = Char["Right Leg"]
+local LLeg = Char["Left Leg"]	
+local Root = Char:FindFirstChild'HumanoidRootPart'
+local Head = Char.Head
+local Sine = 0;
+local Change = 1
+local Attack=false
+local NeutralAnims=true
+local timePos=30;
+local walking=true;
+local legAnims=true;
+
+
+
+local movement = 8
+local footsound=0;
+local WalkSpeed=16;
+local Combo=0;
+
+function SetTween(SPart,CFr,MoveStyle2,outorin2,AnimTime)
+	local MoveStyle = Enum.EasingStyle[MoveStyle2]
+	local outorin = Enum.EasingDirection[outorin2]
+	
+	
+	local dahspeed=1
+	if Attack == true then
+		dahspeed=3 --speedstuff --5
+	end
+	
+	if SPart.Name=="Bullet" then
+		dahspeed=1	
+	end
+	
+	local tweeningInformation = TweenInfo.new(
+		AnimTime/dahspeed,	
+		MoveStyle,
+		outorin,
+		0,
+		false,
+		0
+	)
+	local MoveCF = CFr
+	local tweenanim = game:GetService("TweenService"):Create(SPart,tweeningInformation,MoveCF)
+	tweenanim:Play()
+end
+
+
+NewInstance = function(instance,parent,properties)
+	local inst = Instance.new(instance)
+	inst.Parent = parent
+	if(properties)then
+		for i,v in next, properties do
+			pcall(function() inst[i] = v end)
+		end
+	end
+	return inst;
+end
+
+local NK,RJ,RH,RS,LH,LS=Char.Torso.Neck,Char.HumanoidRootPart["RootJoint"],Char.Torso["Right Hip"],Char.Torso["Right Shoulder"],Char.Torso["Left Hip"],Char.Torso["Left Shoulder"]
+
+local NKC0,RJC0,RHC0,RSC0,LHC0,LSC0=Char.Torso.Neck.C0,Char.HumanoidRootPart["RootJoint"].C0,Char.Torso["Right Hip"].C0,Char.Torso["Right Shoulder"].C0,Char.Torso["Left Hip"].C0,Char.Torso["Left Shoulder"].C0
+
+
+function makeMusic(id,pit,timePos)
+	local sound = Torso:FindFirstChild(script.Name.."song")
+	if(not sound)then 
+		sound = NewInstance("Sound",Torso,{Name=script.Name.."song",Volume=5,Pitch=(pit or 1),Looped=true})
+		NewInstance("EqualizerSoundEffect",sound,{HighGain=0,MidGain=2,LowGain=30})
+	end
+	if(id=='stop')then
+		if(sound)then
+			sound:Stop()
+		end
+	else
+		local timePos = typeof(timePos)=='number' and timePos or sound.TimePosition
+		sound.Volume = 5
+		sound.Name = script.Name.."song"
+		sound.Looped=true
+		sound.SoundId = "rbxassetid://"..id
+		sound.Pitch=(pit or 1)
+		sound:Play()
+		sound.TimePosition = timePos
+	end
+	return sound;
+end
+
+
+
+for _,v in next, Hum:GetPlayingAnimationTracks() do
+	v:Stop(0);
+end
+
+-- SCRIPT STUFF --
+local Frame_Speed = 60 -- The frame speed for swait. 1 is automatically divided by this
+--// Artificial HB \\--
+
+local ArtificialHB = script:FindFirstChild'Heartbeat' or IN("BindableEvent", script)
+ArtificialHB.Name = "Heartbeat"
+
+local tf = 0
+local allowframeloss = true
+local tossremainder = true
+local lastframe = tick()
+local frame = 1/Frame_Speed
+ArtificialHB:Fire()
+
+game:GetService("RunService").Stepped:connect(function(s, p)
+	tf = tf + s
+	if tf >= frame then
+		if allowframeloss then
+			ArtificialHB:Fire()
+			lastframe = tick()
+		else
+			for i = 1, math.floor(tf / frame) do
+				ArtificialHB:Fire()
+			end
+			lastframe = tick()
+		end
+		if tossremainder then
+			tf = 0
+		else
+			tf = tf - frame * math.floor(tf / frame)
+		end
+	end
+end)
+
+function swait(num)
+	if num == 0 or num == nil then
+		ArtificialHB.Event:wait(0.1)
+	else
+		for i = 0, num do
+			ArtificialHB.Event:wait(0.1)
+		end
+	end
+end
+
+
+
+
+
+
+local footstepSounds = {
+	[Enum.Material.Grass]=510933218;
+	[Enum.Material.Metal]=1263161138;
+	[Enum.Material.CorrodedMetal]=1263161138;
+	[Enum.Material.DiamondPlate]=1263161138;
+	[Enum.Material.Wood]=2452053757;
+	[Enum.Material.WoodPlanks]=2452053757;
+	[Enum.Material.Sand]=134456884;
+	[Enum.Material.Snow]=2452051182;
+}
+
+while true do
+	swait()
+	Sine=Sine+Change
+	local hitfloor,posfloor = workspace:FindPartOnRayWithIgnoreList(Ray.new(Root.CFrame.p,((CFrame.new(Root.Position,Root.Position - Vector3.new(0,1,0))).lookVector).unit * (4)), {Effects,Char})
+	local Walking = (math.abs(Root.Velocity.x) > 1 or math.abs(Root.Velocity.z) > 1)
+	local State = (Hum.PlatformStand and 'Paralyzed' or Hum.Sit and 'Sit' or not hitfloor and Root.Velocity.y < -1 and "Fall" or not hitfloor and Root.Velocity.y > 1 and "Jump" or hitfloor and Walking and "Walk" or hitfloor and "Idle")
+	Hum.WalkSpeed = WalkSpeed
+	local sidevec = math.clamp((Root.Velocity*Root.CFrame.rightVector).X+(Root.Velocity*Root.CFrame.rightVector).Z,-Hum.WalkSpeed,Hum.WalkSpeed)
+	local forwardvec =  math.clamp((Root.Velocity*Root.CFrame.lookVector).X+(Root.Velocity*Root.CFrame.lookVector).Z,-Hum.WalkSpeed,Hum.WalkSpeed)
+	local sidevelocity = sidevec/Hum.WalkSpeed
+	local forwardvelocity = forwardvec/Hum.WalkSpeed
+	
+	local lhit,lpos = workspace:FindPartOnRayWithIgnoreList(Ray.new(LLeg.CFrame.p,((CFrame.new(LLeg.Position,LLeg.Position - Vector3.new(0,1,0))).lookVector).unit * (2)), {Effects,Char})
+	local rhit,rpos = workspace:FindPartOnRayWithIgnoreList(Ray.new(RLeg.CFrame.p,((CFrame.new(RLeg.Position,RLeg.Position - Vector3.new(0,1,0))).lookVector).unit * (2)), {Effects,Char})
+	
+	SetTween(RJ,{C0 = RJC0 * CF.N(1.49011612e-08, 0.189537123, -0.590966165, 0.971992552, -0.153945833, -0.177570254, 0.192711115, 0.954565585, 0.227303728, 0.134509996, -0.255157262, 0.957497716)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(1.34110451e-07, -5.58793545e-08, -1.1920929e-07, 0.989387274, -0.130459815, -0.0639770925, 0.136627004, 0.985145867, 0.104022875, 0.0494559631, -0.111659907, 0.992515147)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.678911209, 0.0130777061, -0.132889256, -0.112336569, 0.579523027, -0.807176411, -0.753905952, 0.479460984, 0.449158043, 0.647307098, 0.658991933, 0.383044809)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.245776564, -0.0488060862, 0.230882347, 0.11685501, -0.333171099, -0.935597122, 0.963373303, 0.266972274, 0.025253959, 0.241364643, -0.904280305, 0.352165312)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.691755474, 0.129822016, 0.0726819038, 0.867112279, -0.446177542, -0.221453875, 0.444869488, 0.893673897, -0.0586368069, 0.224069864, -0.0476736724, 0.973406374)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.727092266, 0.380637646, 0.0480112731, 0.806107342, 0.491314739, 0.32984978, -0.558668554, 0.815639555, 0.150405064, -0.195142031, -0.305519402, 0.931975126)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-1.49011612e-08, 0.189537197, -0.590517044, 0.971185148, -0.153113484, -0.182635412, 0.193144888, 0.954604268, 0.226772398, 0.139622644, -0.255513072, 0.956670582)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(-7.4505806e-09, -2.98023224e-08, -1.78813934e-07, 0.988112152, -0.136539161, -0.0706502944, 0.143486917, 0.984067798, 0.104986772, 0.055189915, -0.113876082, 0.991960824)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.675003827, 0.0236415565, -0.129766107, -0.107493497, 0.558513999, -0.822500706, -0.746433675, 0.501130283, 0.437841594, 0.656720579, 0.661007226, 0.363025486)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.249032483, -0.0372584164, 0.227478802, 0.118489452, -0.327943951, -0.937236965, 0.958552361, 0.28408283, 0.0217822324, 0.259109557, -0.900971532, 0.348012209)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.689085484, 0.119797468, 0.0699437261, 0.867011666, -0.447078437, -0.220026419, 0.444267988, 0.893535137, -0.0649685487, 0.225647092, -0.0414222628, 0.973328054)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.727031529, 0.380388796, 0.0480544567, 0.804796576, 0.491840124, 0.332258761, -0.560911, 0.813287437, 0.154734373, -0.194117069, -0.310897022, 0.930409372)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(0, 0.189537421, -0.589136302, 0.969854653, -0.151540428, -0.190833643, 0.193622947, 0.954715908, 0.225893542, 0.147959888, -0.256033689, 0.955277264)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(-2.60770321e-08, -6.33299351e-08, -5.96046448e-08, 0.985842288, -0.146354988, -0.0818248019, 0.154667959, 0.982189059, 0.106689565, 0.064752914, -0.117834717, 0.990919828)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.668395817, 0.0408191383, -0.124689981, -0.100277498, 0.523190439, -0.846295774, -0.73372221, 0.53561002, 0.418059349, 0.67200911, 0.662867844, 0.330166727)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.254327118, -0.0183240622, 0.222100616, 0.120933846, -0.319361657, -0.939884603, 0.950016737, 0.3117733, 0.0163005944, 0.287825078, -0.894877434, 0.341102928)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.684743524, 0.103449583, 0.0655936897, 0.866890013, -0.448473096, -0.217654794, 0.443207681, 0.893251657, -0.0752897188, 0.228185773, -0.0311984159, 0.97311765)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.726840615, 0.379617274, 0.0481808484, 0.802720904, 0.49257645, 0.336165637, -0.564478576, 0.809419394, 0.161877438, -0.192361921, -0.319700867, 0.927786827)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-4.09781933e-08, 0.189537346, -0.586146593, 0.968078792, -0.149084508, -0.201487705, 0.19383423, 0.954949558, 0.224721655, 0.158908069, -0.256603479, 0.953364015)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(7.4505806e-08, -7.82310963e-08, -5.96046448e-08, 0.982490838, -0.159049988, -0.09703058, 0.169344261, 0.979494572, 0.109146699, 0.0776811466, -0.123667151, 0.989278615)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.659286618, 0.0632859766, -0.118049577, -0.0921249092, 0.474977702, -0.875162423, -0.716103375, 0.57909441, 0.389673829, 0.691888034, 0.662605405, 0.286784202)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.261252433, 0.00672629476, 0.215353131, 0.123725563, -0.307997942, -0.943307638, 0.937562287, 0.347688943, 0.00944850594, 0.325067461, -0.885578752, 0.33178547)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.679063499, 0.0819728971, 0.0600894094, 0.86681211, -0.450159818, -0.214459121, 0.441663384, 0.892772257, -0.0888343826, 0.231452703, -0.0177163053, 0.97268486)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.726433575, 0.377950132, 0.0484565496, 0.800111771, 0.493318677, 0.341259122, -0.568998694, 0.804273069, 0.171422184, -0.189899564, -0.33133322, 0.924206018)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(1.86264515e-08, 0.189537182, -0.580835283, 0.966034472, -0.145658478, -0.213450432, 0.193402618, 0.955354333, 0.223368645, 0.171385258, -0.257063657, 0.951075912)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(1.49011612e-07, 8.56816769e-08, -1.1920929e-07, 0.978127003, -0.173188254, -0.115210734, 0.186059758, 0.976096153, 0.112330869, 0.0930023417, -0.131309941, 0.986969233)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.648212373, 0.0887366682, -0.11052756, -0.0847425908, 0.41793111, -0.90451777, -0.694903553, 0.625792027, 0.354250342, 0.714092314, 0.658572674, 0.237390608)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.269096971, 0.0355688483, 0.208173513, 0.126323536, -0.294966519, -0.947120428, 0.921715796, 0.38785997, 0.00214188546, 0.366718322, -0.873246491, 0.320871294)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.672633469, 0.0574910045, 0.0541619658, 0.866860986, -0.451837361, -0.210701481, 0.43966347, 0.892097414, -0.10420344, 0.235049114, -0.00230768346, 0.971980751)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.725710392, 0.374988198, 0.0489478707, 0.797347009, 0.493799329, 0.346987069, -0.573869288, 0.798332274, 0.182591498, -0.186847359, -0.344714344, 0.91992414)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-6.33299351e-08, 0.189537436, -0.57262516, 0.964001, -0.141268969, -0.225267008, 0.19196634, 0.955964625, 0.221992686, 0.183986589, -0.257244855, 0.948669612)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(8.19563866e-08, -3.7252903e-08, 2.98023224e-08, 0.973069489, -0.186974317, -0.134819642, 0.202922106, 0.972275078, 0.116206281, 0.109354205, -0.140434638, 0.984032393)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.636000693, 0.114187852, -0.10300602, -0.0794305503, 0.358728975, -0.930056155, -0.672550678, 0.669372439, 0.315619856, 0.735776126, 0.65057981, 0.188094765)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.276941776, 0.0651117414, 0.20169431, 0.128313303, -0.281805456, -0.950852931, 0.904067934, 0.427363455, -0.00465849834, 0.407672644, -0.859037936, 0.309607923)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.666200042, 0.0327786803, 0.048689574, 0.867117047, -0.453158587, -0.206773639, 0.437313974, 0.89133209, -0.119514503, 0.238462836, 0.0132079702, 0.971061766)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.724591255, 0.370410383, 0.049708128, 0.79490453, 0.49374783, 0.352618545, -0.57834363, 0.792307198, 0.194340006, -0.183427244, -0.358416796, 0.915364563)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(4.84287739e-08, 0.189537153, -0.561231554, 0.962306023, -0.136021823, -0.235510558, 0.189269334, 0.956787705, 0.220758706, 0.195305601, -0.257012337, 0.94646734)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(-7.4505806e-09, -1.45286322e-07, -5.36441803e-07, 0.967862248, -0.198685527, -0.154165283, 0.218039185, 0.968440175, 0.120758936, 0.125306815, -0.150492027, 0.980637789)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.623593688, 0.136654153, -0.0963653773, -0.0765538737, 0.305050969, -0.949254215, -0.652017534, 0.704955041, 0.279125959, 0.754329324, 0.640298605, 0.144931525)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.283866376, 0.0921915472, 0.196976542, 0.129560083, -0.270112634, -0.954072058, 0.887037992, 0.461583346, -0.0102243647, 0.443145543, -0.844973445, 0.299402893)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.660523057, 0.0106368065, 0.0445151329, 0.867632687, -0.453825474, -0.203116551, 0.434788287, 0.89068377, -0.132822305, 0.241190463, 0.02692803, 0.970104098)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.723039389, 0.36405623, 0.050762862, 0.793251812, 0.492964715, 0.357403815, -0.581701875, 0.786993504, 0.205582321, -0.179929525, -0.370981216, 0.911042511)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-4.47034836e-08, 0.189537168, -0.546700239, 0.961237788, -0.130086929, -0.243103951, 0.185209677, 0.957803786, 0.219793826, 0.204253599, -0.256299287, 0.944770455)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(1.86264515e-07, -2.98023224e-07, -5.96046448e-08, 0.96312207, -0.20706889, -0.171809286, 0.229951814, 0.96501106, 0.125999168, 0.139707342, -0.160860345, 0.977039278)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.611822486, 0.153832555, -0.0912885368, -0.0756101608, 0.263316542, -0.961741984, -0.635916948, 0.730174422, 0.249909863, 0.768044889, 0.630483687, 0.112238906)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.289161503, 0.11430192, 0.194773734, 0.130190268, -0.261143416, -0.956480265, 0.873129129, 0.487282485, -0.0141957719, 0.469783008, -0.833282709, 0.291451573)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.656181157, -0.00675338507, 0.042245239, 0.86841619, -0.453662455, -0.200110003, 0.432285309, 0.890391767, -0.142590284, 0.242863953, 0.0373227671, 0.969342113)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.721061945, 0.355953813, 0.0521083772, 0.792730808, 0.4913643, 0.360748589, -0.583417118, 0.783080995, 0.215426266, -0.176642343, -0.381241947, 0.907442629)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-5.21540642e-08, 0.189537197, -0.52932626, 0.960979164, -0.123646371, -0.247448415, 0.179821849, 0.958974481, 0.219162166, 0.210198104, -0.255106896, 0.943788767)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(-2.98023224e-08, 3.7252903e-08, 0, 0.959366262, -0.211482242, -0.186793536, 0.237819701, 0.962306559, 0.131939247, 0.151849836, -0.171001226, 0.97349894)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.601270556, 0.16439572, -0.0881659091, -0.0757586062, 0.23738043, -0.968458235, -0.625899017, 0.744750917, 0.231508464, 0.776215792, 0.62369591, 0.0921548381)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.292417407, 0.129936814, 0.195458055, 0.130438447, -0.255620778, -0.957937241, 0.864203453, 0.502871454, -0.0165137872, 0.485940635, -0.825698674, 0.286502242)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.653509498, -0.0181148052, 0.042185843, 0.869437993, -0.452629805, -0.197999567, 0.429977596, 0.890637696, -0.1479325, 0.243304357, 0.0434827432, 0.968974888)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.718691587, 0.346268296, 0.0537167192, 0.793503702, 0.488966256, 0.362303644, -0.583222687, 0.781023264, 0.223280489, -0.173790991, -0.388477594, 0.904920936)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-2.60770321e-08, 0.189537078, -0.509521604, 0.961593091, -0.116857402, -0.248360887, 0.173224285, 0.960255146, 0.21886839, 0.212913439, -0.253484458, 0.943617284)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(1.04308128e-07, -1.41561031e-07, -1.49011612e-07, 0.956915498, -0.211792052, -0.198637322, 0.241348624, 0.960494339, 0.138569459, 0.161442161, -0.18054007, 0.970227718)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.592256129, 0.167907, -0.087128222, -0.0763339922, 0.228628665, -0.970516503, -0.62260735, 0.749341071, 0.225495249, 0.778802454, 0.621463597, 0.0851456672)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.293499231, 0.138520658, 0.199073792, 0.130497441, -0.253785402, -0.958417177, 0.861176372, 0.50801307, -0.0172629096, 0.491269588, -0.823113441, 0.284848303)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.652625203, -0.0230002403, 0.044386059, 0.870646894, -0.450788289, -0.196886569, 0.427981824, 0.891491234, -0.148575872, 0.242498681, 0.045093406, 0.969103158)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.715995073, 0.335220218, 0.0555486083, 0.795571625, 0.485855967, 0.361953378, -0.581075788, 0.781016707, 0.228830248, -0.171512738, -0.392373413, 0.903673887)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-6.70552254e-08, 0.189537138, -0.480989456, 0.964301169, -0.109346867, -0.241177827, 0.163456216, 0.962335944, 0.21723628, 0.208340019, -0.248903185, 0.945855021)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(3.7252903e-08, -1.1920929e-07, -2.98023224e-07, 0.957064509, -0.201391578, -0.208492085, 0.234386086, 0.96084094, 0.14781037, 0.170560002, -0.190331608, 0.96679014)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.584586322, 0.167051643, -0.0879562497, -0.0932142437, 0.246192917, -0.964728057, -0.624929845, 0.739843965, 0.24918586, 0.775096059, 0.626115024, 0.0848893598)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.292949945, 0.143053859, 0.204196811, 0.121873751, -0.262331009, -0.957250893, 0.872002184, 0.488962471, -0.0229783673, 0.474087447, -0.831924379, 0.288345128)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.652868152, -0.0247113705, 0.0478369594, 0.872790575, -0.446371287, -0.197457403, 0.425788611, 0.894069493, -0.139082193, 0.23862277, 0.0373145193, 0.970395148)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.712155282, 0.314178288, 0.0560287237, 0.801071703, 0.480333865, 0.357160687, -0.573928714, 0.785812199, 0.230444327, -0.169970706, -0.389587671, 0.905169427)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(1.86264515e-08, 0.189537197, -0.437348843, 0.9701401, -0.100259423, -0.220853403, 0.148180276, 0.965874076, 0.212437987, 0.19201766, -0.238820732, 0.951889634)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(-1.56462193e-07, 7.4505806e-08, 2.08616257e-07, 0.960592151, -0.173384368, -0.217257231, 0.210592121, 0.964106798, 0.161707193, 0.181421727, -0.201087296, 0.962626636)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.5779109, 0.164413556, -0.0903826654, -0.143801495, 0.300239712, -0.942961991, -0.629450321, 0.707517505, 0.321265012, 0.763618767, 0.63974613, 0.0872438997)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.291294426, 0.146434069, 0.209482789, 0.0943586454, -0.288143456, -0.952926993, 0.90284276, 0.428101718, -0.0400490016, 0.419489563, -0.856564283, 0.300543368)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.653652251, -0.0264559984, 0.0515754223, 0.876563132, -0.437576115, -0.200409785, 0.422873527, 0.899061561, -0.113430761, 0.229815289, 0.0146814063, 0.97312361)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.706352711, 0.274402082, 0.0535668135, 0.812184572, 0.470432431, 0.345035911, -0.558288097, 0.798376679, 0.225630447, -0.169324502, -0.375883162, 0.911065996)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-4.84287739e-08, 0.189537436, -0.380109966, 0.978227973, -0.088815257, -0.187568352, 0.127291143, 0.970602393, 0.204274744, 0.163911566, -0.223703101, 0.960775733)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(3.7252903e-08, 2.23517418e-08, -3.57627869e-07, 0.966028214, -0.12858589, -0.224176988, 0.170714766, 0.968742371, 0.179985687, 0.194026113, -0.212141573, 0.957783818)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.572040081, 0.159967184, -0.0941721201, -0.228688329, 0.388369143, -0.892676473, -0.62824434, 0.641592443, 0.440077364, 0.743646979, 0.661459506, 0.097265996)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.288603097, 0.148472324, 0.214908004, 0.0443439707, -0.328961879, -0.943301499, 0.945541918, 0.318601638, -0.0666580871, 0.322465599, -0.888975263, 0.325175315)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.655037701, -0.0280708671, 0.0555508137, 0.881672442, -0.42471686, -0.205594942, 0.41930598, 0.90502882, -0.0714532286, 0.216416731, -0.0232089572, 0.976025283)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.69875896, 0.217371762, 0.0482932329, 0.828348637, 0.455965906, 0.325473964, -0.533958912, 0.818382263, 0.212458223, -0.169488475, -0.349779487, 0.921373069)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-3.91155481e-08, 0.189537212, -0.312856078, 0.986939788, -0.0741609335, -0.143003806, 0.101277381, 0.975993395, 0.192820758, 0.125271007, -0.204785511, 0.970757484)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(1.34110451e-07, 2.98023224e-08, -4.76837158e-07, 0.971029639, -0.0701059178, -0.228443846, 0.117625095, 0.972385645, 0.201570392, 0.208004206, -0.222601548, 0.952461481)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.566619456, 0.15387249, -0.098847717, -0.34234485, 0.498424113, -0.796475708, -0.608181, 0.528596818, 0.59220022, 0.716181457, 0.687138081, 0.122169688)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.28508395, 0.149040967, 0.220425665, -0.0310346764, -0.377603054, -0.925447345, 0.982760251, 0.157308102, -0.0971419215, 0.182261392, -0.912507653, 0.366211355)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.657046199, -0.0293234587, 0.0596764386, 0.887549818, -0.408709198, -0.212631479, 0.415330738, 0.909552515, -0.014654329, 0.199388698, -0.0753058046, 0.977022588)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.689823627, 0.147022426, 0.0406910479, 0.848097861, 0.437145561, 0.299389005, -0.501798451, 0.844081163, 0.189011231, -0.17008315, -0.310533017, 0.935222507)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-3.44589353e-08, 0.189537197, -0.241366148, 0.994309247, -0.0557342321, -0.0907899141, 0.0713228062, 0.981315315, 0.178699061, 0.0791338757, -0.184157521, 0.979705989)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(1.63912773e-07, -7.4505806e-09, 0, 0.973276138, -0.00389257073, -0.229604855, 0.0568519421, 0.972814739, 0.224498287, 0.222489074, -0.231552288, 0.947038591)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.561134696, 0.146511033, -0.103688836, -0.467816532, 0.605748951, -0.643596172, -0.557348609, 0.362960249, 0.746741056, 0.685937583, 0.708045363, 0.167814523)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.281096727, 0.148123786, 0.225969553, -0.129037082, -0.422115386, -0.897311449, 0.991582811, -0.0452222526, -0.121320188, 0.010632595, -0.905413449, 0.424397856)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.659644604, -0.0299514532, 0.0638144016, 0.893333435, -0.391290545, -0.221014202, 0.411585599, 0.909839988, 0.0528084077, 0.180424079, -0.138141856, 0.973839819)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.680265605, 0.0699474216, 0.0316421986, 0.869119167, 0.414961219, 0.269144982, -0.464292765, 0.872052848, 0.154777139, -0.170482099, -0.259482235, 0.950581372)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-3.63215804e-08, 0.189537197, -0.172774553, 0.998779714, -0.033640705, -0.036158476, 0.0391127914, 0.985815227, 0.163213268, 0.0301549658, -0.164428353, 0.985927999)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(2.68220901e-07, 5.96046448e-08, -2.38418579e-07, 0.971692383, 0.0620427802, -0.227957457, -0.00410491927, 0.969188869, 0.246284783, 0.236213937, -0.238377288, 0.942008078)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.55499661, 0.138462067, -0.107840523, -0.579404771, 0.682371259, -0.445712268, -0.476917654, 0.159613892, 0.864333928, 0.660938621, 0.713367224, 0.232953995)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.277109474, 0.145863771, 0.231455326, -0.237660155, -0.451418251, -0.860080838, 0.957167268, -0.259585887, -0.128242269, -0.165374011, -0.853719413, 0.493776083)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.662726283, -0.029722929, 0.0678095222, 0.898001254, -0.37488696, -0.230333611, 0.40919891, 0.903973103, 0.124052525, 0.161709532, -0.205651596, 0.965172291)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.670994043, -0.00551068783, 0.0223269463, 0.888821781, 0.391414315, 0.238308132, -0.425495058, 0.897998512, 0.11203862, -0.170146659, -0.200981542, 0.964705467)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-4.3772161e-08, 0.189537361, -0.113925062, 0.999844253, -0.00873631053, 0.0153357182, 0.0063688471, 0.988945544, 0.148143023, -0.0164604094, -0.148022279, 0.988847136)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(8.94069672e-08, -4.47034836e-08, -5.36441803e-07, 0.967071474, 0.11973536, -0.224580586, -0.057724338, 0.962615073, 0.264651209, 0.24787274, -0.242972821, 0.937829137)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.547687054, 0.130372345, -0.11052154, -0.656840801, 0.715725958, -0.237268925, -0.385666192, -0.0484969914, 0.921362936, 0.647936523, 0.696695328, 0.307886213)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.273589909, 0.142540574, 0.236806512, -0.339526594, -0.463450789, -0.818495572, 0.886166096, -0.449334353, -0.113174163, -0.315327555, -0.763748646, 0.56325537)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.666138649, -0.0284857154, 0.0715166032, 0.900626659, -0.362026364, -0.240433827, 0.409562916, 0.89207685, 0.190937907, 0.145361036, -0.270436317, 0.951700687)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.662881136, -0.0711719394, 0.0139467716, 0.905177474, 0.369218498, 0.210549742, -0.389970988, 0.918464899, 0.0659161434, -0.16904512, -0.141774133, 0.975358307)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-4.58676368e-08, 0.189537197, -0.0698363781, 0.998084724, 0.0176939331, 0.0592774637, -0.0255936924, 0.99047637, 0.135283306, -0.0563192293, -0.136541337, 0.989032149)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(1.34110451e-07, 1.49011612e-08, -5.06639481e-07, 0.961517394, 0.163349718, -0.220910072, -0.0984262973, 0.955489159, 0.278123587, 0.256508589, -0.245677322, 0.934797347)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.538859248, 0.122806847, -0.111190766, -0.696404219, 0.715622425, -0.0539030358, -0.308230221, -0.230430663, 0.922982037, 0.648085773, 0.659383237, 0.381049275)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.270898998, 0.138492078, 0.241966903, -0.421262294, -0.46628803, -0.777890265, 0.80248946, -0.591255963, -0.080169417, -0.42255047, -0.658021212, 0.623265266)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.669722497, -0.0262063146, 0.074840188, 0.900598764, -0.354617149, -0.251333624, 0.413837105, 0.876377642, 0.246376306, 0.132893801, -0.325897098, 0.936018348)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.656580567, -0.120869875, 0.00745615363, 0.917227149, 0.350975394, 0.1884422, -0.361339211, 0.93215996, 0.0226310715, -0.167715207, -0.0888494253, 0.981823504)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-4.84287739e-08, 0.189537287, -0.0431208909, 0.994664311, 0.0444080941, 0.0931172669, -0.056018915, 0.990442455, 0.126038402, -0.0866301656, -0.130582243, 0.987645447)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(4.47034836e-08, 5.96046448e-08, 2.38418579e-07, 0.957249701, 0.189899772, -0.218199566, -0.123283848, 0.950225711, 0.286133379, 0.261675507, -0.247000605, 0.93301481)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.528378606, 0.116150975, -0.109599829, -0.706708014, 0.702261865, 0.0859772339, -0.260905117, -0.371636629, 0.890962839, 0.65764147, 0.607218683, 0.445862353)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.269244373, 0.134037375, 0.246914148, -0.478072077, -0.471159458, -0.741252959, 0.730395436, -0.681990087, -0.0375790112, -0.487821341, -0.5593732, 0.670173109)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.673335195, -0.0229426622, 0.0777346194, 0.8976807, -0.353578299, -0.26296705, 0.422520638, 0.860078633, 0.285904229, 0.125082642, -0.367759556, 0.921470106)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.652438879, -0.151212156, 0.00342646241, 0.92496413, 0.338384688, 0.17302306, -0.34144935, 0.939815044, -0.0126620047, -0.166894048, -0.0473668203, 0.9848364)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-4.65661287e-09, 0.189537153, -0.0343365669, 0.990742743, 0.0705166161, 0.116001807, -0.0845926628, 0.98900789, 0.121274583, -0.106174834, -0.129964799, 0.985817552)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(1.78813934e-07, -4.47034836e-08, -1.1920929e-07, 0.955693007, 0.19866696, -0.217214987, -0.131511763, 0.948333621, 0.28873536, 0.263354421, -0.24737601, 0.932442784)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.516269386, 0.110608995, -0.105741739, -0.698199749, 0.692714453, 0.180731639, -0.248760581, -0.471472681, 0.846068323, 0.671293795, 0.545765877, 0.501502275)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.268694699, 0.129426539, 0.251642644, -0.510953724, -0.486158669, -0.708925962, 0.684009135, -0.729437649, 0.00722974073, -0.520632207, -0.481217772, 0.705245912)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.676882386, -0.0188094378, 0.0802030861, 0.891937613, -0.358933926, -0.274980128, 0.435344279, 0.846013248, 0.30779323, 0.122159183, -0.394243628, 0.910850883)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.650540888, -0.161242604, 0.00207972527, 0.928886592, 0.33199212, 0.164167315, -0.330529153, 0.943071663, -0.0369647816, -0.167093426, -0.0199259873, 0.985739708)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(1.86264515e-09, 0.189537197, -0.0466778353, 0.986217856, 0.099106364, 0.132484913, -0.115542911, 0.985688806, 0.122749537, -0.118423611, -0.136365458, 0.983555019)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(8.19563866e-08, -1.49011612e-08, -2.38418579e-07, 0.957838058, 0.189864099, -0.215634048, -0.124475554, 0.950668335, 0.284140468, 0.258944511, -0.245319337, 0.934219658)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.50112623, 0.104550481, -0.0932330638, -0.670189917, 0.696694613, 0.25585565, -0.273658901, -0.552405238, 0.787375033, 0.689895809, 0.45767346, 0.560873091)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.273519635, 0.119276941, 0.252197802, -0.525217474, -0.525682986, -0.669181406, 0.660885513, -0.747363806, 0.0683935732, -0.536075532, -0.406330913, 0.739944994)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.68089813, -0.00980824232, 0.0818195045, 0.881073713, -0.373215914, -0.290549338, 0.456369013, 0.832183599, 0.314956903, 0.124243364, -0.410098135, 0.90353936)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.649852753, -0.15384829, 0.00258758664, 0.928956211, 0.333361238, 0.160967484, -0.328790694, 0.942797542, -0.0550425313, -0.170108572, -0.00179259549, 0.985423684)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(1.86264515e-09, 0.189537197, -0.0838198662, 0.980095923, 0.133183733, 0.147221103, -0.152910516, 0.979389191, 0.131966636, -0.12661095, -0.151851609, 0.980260551)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(1.2665987e-07, -2.98023224e-08, -1.1920929e-07, 0.96388948, 0.163238376, -0.210405141, -0.103102535, 0.957232773, 0.270324647, 0.245534062, -0.238869786, 0.939496875)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.481628269, 0.0965042114, -0.0654494315, -0.615685642, 0.711493075, 0.338687181, -0.341542304, -0.628290892, 0.698998928, 0.710126877, 0.31468758, 0.629834652)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.28821218, 0.0980823636, 0.244515777, -0.52479732, -0.599112213, -0.604691803, 0.654448509, -0.738230944, 0.16343917, -0.544320703, -0.30996719, 0.779509723)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.685931265, 0.00811487436, 0.0821013153, 0.862090111, -0.398875743, -0.312567949, 0.489379734, 0.815430403, 0.309161693, 0.131560043, -0.419489473, 0.898176193)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.649381161, -0.131595314, 0.00411856174, 0.924729347, 0.344068944, 0.162764192, -0.336652607, 0.938870192, -0.0720277652, -0.177596688, 0.0118113188, 0.984032512)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(7.4505806e-09, 0.189537227, -0.144210577, 0.972016394, 0.17148684, 0.160550386, -0.195557386, 0.969376266, 0.148549721, -0.130159408, -0.17578958, 0.975785077)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(1.41561031e-07, -5.21540642e-08, -2.98023224e-07, 0.972352505, 0.119613588, -0.200557366, -0.0677362308, 0.966398358, 0.247963637, 0.223478124, -0.227522999, 0.947782099)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.458393335, 0.0870629549, -0.0231413245, -0.532743096, 0.724609852, 0.437178999, -0.455823272, -0.680945754, 0.573182464, 0.713028669, 0.106082566, 0.693063021)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.312501401, 0.0666595697, 0.228986859, -0.508563459, -0.698430121, -0.50354588, 0.663134634, -0.69073832, 0.288327843, -0.549195588, -0.187285736, 0.814437568)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.691820145, 0.0342794061, 0.0810709298, 0.83470571, -0.434172124, -0.338763595, 0.531514227, 0.796108961, 0.289315552, 0.144079834, -0.421550959, 0.895285368)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.649109542, -0.0954128504, 0.00660669804, 0.916339397, 0.363017172, 0.168938994, -0.352961779, 0.931560874, -0.0872512236, -0.189050615, 0.0203229915, 0.981757104)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(4.09781933e-08, 0.189537361, -0.223198935, 0.961890101, 0.211827487, 0.172906667, -0.241143346, 0.955270827, 0.17119509, -0.128908873, -0.206366166, 0.969946146)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(2.98023224e-08, -1.2665987e-07, -2.68220901e-07, 0.980733156, 0.0621625893, -0.18519856, -0.0204628669, 0.975495458, 0.219066069, 0.194278061, -0.211055562, 0.957972705)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.432704508, 0.0772240162, 0.0310899913, -0.424619466, 0.715379834, 0.554914474, -0.608944833, -0.679227889, 0.409677744, 0.669988513, -0.163955241, 0.724040091)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.344997585, 0.0272468328, 0.206990123, -0.475010097, -0.805226564, -0.354930162, 0.682213724, -0.591739297, 0.42945233, -0.555832505, -0.0381439701, 0.830418825)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.698252618, 0.0668503046, 0.0788972974, 0.800072849, -0.47569567, -0.36550951, 0.577824891, 0.774845123, 0.256386161, 0.161251143, -0.416327834, 0.89480114)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.649001837, -0.0480901003, 0.0098592639, 0.904325008, 0.387805074, 0.178335115, -0.375351429, 0.921433628, -0.100358106, -0.2032433, 0.0238181371, 0.978838563)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(2.23517418e-08, 0.189537153, -0.312679917, 0.950162888, 0.25117743, 0.1846634, -0.286238372, 0.937578917, 0.1975182, -0.12352442, -0.24053216, 0.962749302)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(9.68575478e-08, -1.49011612e-08, -2.68220901e-07, 0.98641336, -0.00305626169, -0.16425395, 0.0341958404, 0.981746852, 0.187093139, 0.16068399, -0.190167993, 0.968512714)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.406502873, 0.0683347583, 0.0925530791, -0.30726096, 0.662024736, 0.683603764, -0.772018433, -0.593419135, 0.227686241, 0.556397617, -0.457795769, 0.693429887)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.382990837, -0.0163624883, 0.18103084, -0.425740421, -0.890706599, -0.159332663, 0.703120053, -0.4364914, 0.561335504, -0.569532633, 0.1269532, 0.812105656)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.704751372, 0.102725148, 0.0759244263, 0.761256635, -0.518805027, -0.389011174, 0.622491896, 0.752715945, 0.214295208, 0.181637511, -0.405290127, 0.89596194)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.648988426, 0.00551980734, 0.0135445297, 0.889878452, 0.415048361, 0.189344704, -0.400504649, 0.909501731, -0.111367144, -0.218431994, 0.0232699495, 0.975574672)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(5.96046448e-08, 0.189537197, -0.402160645, 0.937904835, 0.286239415, 0.19596307, -0.327040792, 0.917987287, 0.224373832, -0.115666986, -0.274529219, 0.954596698)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(2.23517418e-08, 8.19563866e-08, -1.1920929e-07, 0.987950265, -0.0679435357, -0.139061034, 0.0896481797, 0.983631372, 0.156309634, 0.126164585, -0.166892767, 0.977869809)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.382090718, 0.0618562847, 0.155049801, -0.206886634, 0.560487568, 0.801904917, -0.902242184, -0.426276684, 0.0651711002, 0.378361166, -0.710029542, 0.593886554)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.422763467, -0.0593279302, 0.154429406, -0.368355721, -0.927565515, 0.0627393201, 0.716188192, -0.240089223, 0.655310631, -0.592780471, 0.286320508, 0.752749443)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.710768938, 0.137973726, 0.0726388991, 0.722628534, -0.558779001, -0.406908542, 0.660793841, 0.731202364, 0.169394299, 0.202878296, -0.391291618, 0.897625268)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.64897126, 0.059130311, 0.0172292888, 0.874771416, 0.441231608, 0.200224027, -0.424918234, 0.897160769, -0.120612368, -0.232850954, 0.0204293597, 0.972297907)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(2.98023224e-08, 0.189537406, -0.481149107, 0.926555932, 0.314295828, 0.206669912, -0.360420644, 0.899044693, 0.248627931, -0.10766273, -0.304855764, 0.946293771)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(3.7252903e-08, 9.68575478e-08, -1.1920929e-07, 0.985845268, -0.124571614, -0.112210363, 0.138901025, 0.98166573, 0.130533218, 0.093892321, -0.144271731, 0.985073566)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.361590743, 0.0590020567, 0.212278724, -0.142043307, 0.433732778, 0.889775038, -0.973632097, -0.223320156, -0.0465696417, 0.178505912, -0.872928441, 0.454017222)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.460416913, -0.0968808234, 0.130571097, -0.314529747, -0.907919943, 0.277042121, 0.716175735, -0.0354155414, 0.697020948, -0.623027623, 0.417644739, 0.661369503)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.715793848, 0.168722689, 0.0695546567, 0.68836087, -0.592075825, -0.419053137, 0.690487921, 0.711842179, 0.128480986, 0.222229108, -0.37779206, 0.898825407)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.64886266, 0.106455088, 0.0204832256, 0.860877633, 0.463669032, 0.209524453, -0.445821166, 0.885840118, -0.128573537, -0.24522081, 0.0172756687, 0.969313383)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(1.04308128e-07, 0.189537495, -0.541539669, 0.917448282, 0.333793133, 0.216497153, -0.384607494, 0.883345246, 0.2679151, -0.10181351, -0.329064667, 0.93880266)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(1.75088644e-07, 7.07805157e-08, -2.38418579e-07, 0.982092261, -0.167305842, -0.0866242647, 0.176481932, 0.97789526, 0.112138599, 0.0659479722, -0.125418097, 0.989909708)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.346476048, 0.0604904033, 0.25927341, -0.111306913, 0.313504845, 0.943040609, -0.993779302, -0.0386157259, -0.104458064, 0.00366809173, -0.94880116, 0.315852821)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.492778063, -0.125391275, 0.112129718, -0.27391848, -0.847298861, 0.455030888, 0.704797447, 0.145077005, 0.694415867, -0.654392302, 0.510918081, 0.557434916)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.719485283, 0.192034841, 0.0670967698, 0.661201775, -0.616886497, -0.426922858, 0.71167028, 0.695815504, 0.0967820287, 0.237355709, -0.367820501, 0.899094045)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.648593903, 0.142636359, 0.0229718089, 0.8496328, 0.480946541, 0.216366187, -0.461660922, 0.876614451, -0.135707825, -0.254937679, 0.0154142892, 0.966834605)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(1.49011612e-08, 0.189537242, -0.578681588, 0.911431253, 0.344349921, 0.225202501, -0.399162292, 0.872780144, 0.280934781, -0.0998123959, -0.34594509, 0.932930589)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(6.33299351e-08, -7.4505806e-09, -1.1920929e-07, 0.978981197, -0.193451315, -0.0645938367, 0.199315086, 0.974619389, 0.101934932, 0.043234963, -0.112666905, 0.992691815)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.337427199, 0.0665121898, 0.293091357, -0.101308286, 0.219289213, 0.970385969, -0.9872756, 0.0980142951, -0.12522094, -0.122571208, -0.970724285, 0.206569314)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.517859697, -0.142837018, 0.100698486, -0.250461072, -0.770755649, 0.585837007, 0.687667966, 0.284306347, 0.668043852, -0.68145591, 0.570180416, 0.45881626)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.721688688, 0.206282377, 0.0655421615, 0.642288566, -0.632830679, -0.432424366, 0.725637794, 0.683732748, 0.0771965981, 0.246810257, -0.363365948, 0.898359537)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.648120642, 0.164889514, 0.024500519, 0.841819108, 0.492705971, 0.220411465, -0.471952975, 0.870051861, -0.142374426, -0.261918128, 0.0158296674, 0.964960337)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-2.98023224e-08, 0.189537436, -0.591023028, 0.908774316, 0.34637323, 0.232712254, -0.404492557, 0.868247092, 0.287285596, -0.102543667, -0.355208099, 0.929145932)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(5.21540642e-08, -4.09781933e-08, -2.68220901e-07, 0.978125036, -0.202555269, -0.0473605394, 0.20639886, 0.973376393, 0.099689357, 0.0259070508, -0.107283816, 0.993890941)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.334477246, 0.0768665075, 0.312639296, -0.0991722047, 0.156331375, 0.982713282, -0.975315511, 0.180537179, -0.127145678, -0.197293222, -0.971064806, 0.134568065)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.534806132, -0.148613483, 0.0968803763, -0.243615866, -0.698697627, 0.672661006, 0.670039356, 0.380192041, 0.637574494, -0.701212227, 0.606032729, 0.375534058)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.722405016, 0.210997462, 0.0650159717, 0.631693304, -0.640288293, -0.437028974, 0.73379612, 0.675679386, 0.0707149655, 0.250013441, -0.365360498, 0.896663427)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.647434413, 0.172282994, 0.0250093639, 0.837696016, 0.499134779, 0.221652925, -0.476803154, 0.866315961, -0.14884755, -0.266316295, 0.0190043971, 0.963698328)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-8.94069672e-08, 0.189537123, -0.590922236, 0.907649815, 0.34422645, 0.24016659, -0.405492276, 0.866891503, 0.289957225, -0.108387411, -0.360565275, 0.926415145)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(9.87201929e-08, 2.16066837e-07, 8.94069672e-08, 0.978595018, -0.203005195, -0.0337766185, 0.205425784, 0.973427594, 0.101188309, 0.0123373177, -0.105961025, 0.994293749)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.334554464, 0.0896688849, 0.323678136, -0.0996119231, 0.111781798, 0.98872757, -0.964292705, 0.234212488, -0.123629384, -0.245391935, -0.9657377, 0.0844601765)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.54696244, -0.147962913, 0.0974898934, -0.244206354, -0.632251024, 0.735269904, 0.653356254, 0.453019351, 0.606546998, -0.716581464, 0.628515899, 0.302455008)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.722375572, 0.210800648, 0.0653452277, 0.624981105, -0.643631995, -0.441742897, 0.7395733, 0.669304013, 0.0711588264, 0.249860197, -0.371173859, 0.894315243)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.6450454, 0.169455349, 0.024433732, 0.835570514, 0.502913535, 0.221133396, -0.478654742, 0.863982618, -0.15628092, -0.269650936, 0.024737319, 0.962640285)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(2.98023224e-08, 0.189537466, -0.590246916, 0.906387746, 0.341601282, 0.248535752, -0.406355888, 0.865839183, 0.29188627, -0.115483247, -0.365556091, 0.923597515)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(1.77882612e-07, -2.60770321e-08, -4.17232513e-07, 0.978978693, -0.202726141, -0.0224230811, 0.203959882, 0.973581374, 0.102663092, 0.00101814407, -0.105078384, 0.994463503)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.334949851, 0.103234962, 0.331708938, -0.102874264, 0.0742998794, 0.991915524, -0.952003956, 0.281653792, -0.119832337, -0.288280219, -0.956635118, 0.0417588539)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.557626903, -0.145811081, 0.0993191749, -0.244226918, -0.565585613, 0.787696719, 0.636853993, 0.519014716, 0.570123434, -0.73127979, 0.64088732, 0.233438045)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.722211957, 0.210049331, 0.0663023889, 0.618077457, -0.646715164, -0.446922183, 0.745566964, 0.662480652, 0.0724550486, 0.24921912, -0.377993286, 0.891633809)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.6394642, 0.160725296, 0.0226872265, 0.833744824, 0.506500363, 0.219833359, -0.479767174, 0.861622691, -0.165621266, -0.273300558, 0.0326168016, 0.961375535)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-4.47034836e-08, 0.189537242, -0.588281631, 0.905172646, 0.338159323, 0.257508665, -0.406645745, 0.865288079, 0.293113977, -0.123699956, -0.370033562, 0.920746148)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(3.95812094e-08, -3.7252903e-08, -2.38418579e-07, 0.979379773, -0.201594174, -0.0132354964, 0.201865375, 0.973858416, 0.104164965, -0.00810950249, -0.104688838, 0.994471967)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.33597818, 0.117414743, 0.336351722, -0.108122282, 0.0450498797, 0.993116438, -0.939464927, 0.322089821, -0.116891958, -0.325138718, -0.94563669, 0.0074978862)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.566546321, -0.141857862, 0.102279782, -0.243395582, -0.502016544, 0.829902351, 0.620909393, 0.576687157, 0.530945897, -0.745137691, 0.644524097, 0.171343789)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.721793056, 0.20846945, 0.0677962303, 0.611292601, -0.649301529, -0.452469409, 0.751556575, 0.655409932, 0.0748391747, 0.247959837, -0.385804892, 0.888634086)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.630917311, 0.146009147, 0.0198155642, 0.832219481, 0.509870529, 0.217813447, -0.480173171, 0.859205067, -0.176637426, -0.277208567, 0.0424130373, 0.959873199)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-8.94069672e-08, 0.189537123, -0.584133506, 0.904273629, 0.333502501, 0.26658082, -0.405794829, 0.865462005, 0.293779016, -0.132739529, -0.373833686, 0.917948127)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(1.15949661e-07, -1.49011612e-08, -2.08616257e-07, 0.97987771, -0.199511915, -0.00589289516, 0.199007064, 0.974274099, 0.105764993, -0.0153600797, -0.104809485, 0.994373739)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.338021398, 0.131929606, 0.337416559, -0.114467114, 0.0246048272, 0.993122339, -0.927642226, 0.355090767, -0.115717374, -0.355495661, -0.934507966, -0.0178217553)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.573539972, -0.135860652, 0.106127769, -0.241568446, -0.444810033, 0.862431824, 0.606009185, 0.624982715, 0.492086828, -0.757890165, 0.641514361, 0.118582837)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.720958173, 0.205745518, 0.0696248412, 0.605077028, -0.651097775, -0.458206743, 0.757223964, 0.648413181, 0.078563869, 0.245954543, -0.394502372, 0.885366738)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.620027959, 0.125814795, 0.0159921646, 0.830973506, 0.512990713, 0.215229705, -0.479978085, 0.856719196, -0.188820913, -0.281254798, 0.0535996817, 0.958135068)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(5.96046448e-08, 0.189537227, -0.576867759, 0.904014349, 0.327239186, 0.275086433, -0.403184146, 0.866562366, 0.294129699, -0.14212881, -0.376807958, 0.915322423)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(5.11936378e-08, -2.04890966e-07, -5.36441803e-07, 0.980514228, -0.196448147, 0.000226095377, 0.195285037, 0.974832356, 0.107544109, -0.0213472415, -0.10540434, 0.994200349)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.341473639, 0.146376491, 0.335038811, -0.121087819, 0.0126896221, 0.992560685, -0.917288303, 0.380718201, -0.116772279, -0.379367858, -0.924604058, -0.0344602391)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.578579426, -0.127721608, 0.110448301, -0.238822773, -0.396658063, 0.886355519, 0.592721045, 0.663463771, 0.456615508, -0.769185007, 0.634411752, 0.0766573697)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.719546556, 0.20159632, 0.0714992881, 0.59997952, -0.651800871, -0.463875413, 0.762180746, 0.641911268, 0.0838468522, 0.243115753, -0.4038634, 0.881923735)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.607869267, 0.101400912, 0.0115556121, 0.829954743, 0.515831351, 0.212351829, -0.479380131, 0.854196668, -0.201352268, -0.285254031, 0.0653161108, 0.956223786)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-8.94069672e-08, 0.189537123, -0.565738022, 0.904701233, 0.319079161, 0.282319248, -0.398281127, 0.868705273, 0.294488251, -0.151287153, -0.378866285, 0.913002014)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(9.17352736e-08, -7.82310963e-08, -1.1920929e-07, 0.981285155, -0.192468062, 0.00597155187, 0.19067046, 0.975519896, 0.109571725, -0.0269143991, -0.106382452, 0.993960977)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.346639633, 0.160298228, 0.329744011, -0.12735264, 0.00810161326, 0.991824508, -0.908798099, 0.399620473, -0.119956091, -0.397325248, -0.91664499, -0.0435298905)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.581839859, -0.117558092, 0.114709705, -0.235488653, -0.359124839, 0.903091609, 0.581591129, 0.692405045, 0.426997662, -0.778650701, 0.625783205, 0.0458102971)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.717435718, 0.195847094, 0.0730726123, 0.596540689, -0.65116787, -0.469169438, 0.766036093, 0.636352599, 0.090797469, 0.239432812, -0.41356495, 0.878428161)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.595820129, 0.074672997, 0.00696069002, 0.829081416, 0.518382072, 0.209532902, -0.478655607, 0.851723135, -0.213206008, -0.288986087, 0.0764713436, 0.954274178)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(1.11758709e-07, 0.189537525, -0.550383985, 0.906534374, 0.308908552, 0.28769967, -0.390774906, 0.871876836, 0.295171052, -0.159657806, -0.380008548, 0.911099851)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(-2.70083547e-08, 7.82310963e-08, -3.87430191e-07, 0.982144833, -0.187728196, 0.0122322589, 0.185218915, 0.976307392, 0.111883394, -0.0329460911, -0.107620127, 0.993646145)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.353649437, 0.173289448, 0.322352111, -0.132886827, 0.00895024743, 0.991090775, -0.902174056, 0.412956893, -0.124693885, -0.410393953, -0.91070658, -0.0468020104)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.58367455, -0.105688974, 0.118387312, -0.232078135, -0.332381666, 0.914145529, 0.573007226, 0.712707996, 0.4046112, -0.786004186, 0.617713451, 0.0250530709)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.71456933, 0.188478351, 0.0740327835, 0.595152974, -0.649085283, -0.473794967, 0.768486857, 0.632103622, 0.099364005, 0.234991431, -0.423241556, 0.875011563)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.585250199, 0.0477646589, 0.00267481804, 0.828254998, 0.520662606, 0.207133189, -0.478103936, 0.849421382, -0.223383203, -0.292250305, 0.0859871283, 0.952468336)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-5.21540642e-08, 0.189537123, -0.530884981, 0.909558237, 0.296794832, 0.29088968, -0.380620718, 0.87593919, 0.296409369, -0.166828915, -0.380320132, 0.909683943)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(9.406358e-08, -7.82310963e-08, -5.96046448e-07, 0.983019948, -0.182435125, 0.0197306722, 0.179049551, 0.977157831, 0.114472032, -0.0401636362, -0.10899549, 0.993230581)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.362449408, 0.185085744, 0.313761145, -0.137553349, 0.0131353289, 0.990407288, -0.897128701, 0.422148168, -0.130196989, -0.419808775, -0.906431675, -0.0462837853)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.584522247, -0.0925492942, 0.121080905, -0.229147345, -0.315416664, 0.920871198, 0.567106128, 0.72563982, 0.389663398, -0.791127205, 0.611522138, 0.0125962477)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.710969567, 0.179626465, 0.0741657317, 0.595976591, -0.645586789, -0.477524847, 0.769371688, 0.629374802, 0.109337986, 0.22995469, -0.432556659, 0.871788621)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.577202916, 0.0225439072, -0.000920057297, 0.827381849, 0.522718966, 0.205436766, -0.477980793, 0.847411633, -0.231144994, -0.294913322, 0.0930504799, 0.950982571)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-7.4505806e-09, 0.189537197, -0.507643223, 0.9136765, 0.282928646, 0.291798919, -0.367983103, 0.880679607, 0.298315108, -0.172579482, -0.37994054, 0.90876919)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(1.70432031e-07, 1.2665987e-07, 0, 0.983823061, -0.176794052, 0.0289167017, 0.172306404, 0.978035033, 0.117294841, -0.0490185842, -0.110414907, 0.992676079)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.372847617, 0.195583105, 0.304760158, -0.141373351, 0.0187943149, 0.989777982, -0.893250525, 0.428582221, -0.135724023, -0.426752061, -0.903307319, -0.0438020416)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.58479774, -0.0785734206, 0.12256667, -0.227166802, -0.306559056, 0.924346685, 0.563779771, 0.732536912, 0.381499559, -0.794070303, 0.607792079, 0.00642370339)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.7067132, 0.169517398, 0.0733751357, 0.598949552, -0.640817463, -0.480221063, 0.768667281, 0.628213882, 0.120408326, 0.224521637, -0.441248536, 0.868843853)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.572270989, 0.000291347504, -0.00359493494, 0.826391459, 0.524607539, 0.204608366, -0.478450775, 0.845773757, -0.23611702, -0.296920925, 0.0972302333, 0.949939013)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-5.96046448e-08, 0.189537108, -0.481211901, 0.918704689, 0.267550498, 0.290514112, -0.35313639, 0.885864735, 0.300895959, -0.176851347, -0.379025578, 0.908329964)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(8.19563866e-08, -2.19792128e-07, 1.49011612e-07, 0.984463811, -0.170975134, 0.0399808437, 0.165125296, 0.978909492, 0.120290391, -0.0597042516, -0.11181967, 0.991933346)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.384595513, 0.204803646, 0.295926601, -0.144442439, 0.0245233327, 0.989209354, -0.890136361, 0.433422387, -0.140720814, -0.432196498, -0.90085721, -0.0407755002)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.584832728, -0.0641267747, 0.122775435, -0.22646004, -0.303989023, 0.925368309, 0.562749147, 0.734603465, 0.379039913, -0.795002759, 0.606587648, 0.00471115066)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.701907456, 0.158399403, 0.0716618896, 0.603859723, -0.63497889, -0.481825143, 0.766447127, 0.628549397, 0.132228732, 0.218888417, -0.449140757, 0.866233289)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.570633769, -0.0183104873, -0.00525420904, 0.825240195, 0.526380897, 0.204700023, -0.47958833, 0.844531059, -0.238248125, -0.298284829, 0.0984403268, 0.949387014)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(8.94069672e-08, 0.189537227, -0.447307557, 0.927772522, 0.244010761, 0.282306403, -0.327264726, 0.895558953, 0.301449776, -0.179265082, -0.372065753, 0.910731077)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(1.49011612e-07, -7.4505806e-09, -1.78813934e-07, 0.984990358, -0.16403155, 0.0537371188, 0.156428829, 0.979898214, 0.123813264, -0.0729662105, -0.113548867, 0.990849435)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.39835149, 0.213677704, 0.286273539, -0.145192638, 0.0445259549, 0.988401055, -0.89561522, 0.41862455, -0.150420845, -0.42046687, -0.90706718, -0.020903239)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.580269694, -0.0462131649, 0.120901823, -0.232572019, -0.32676214, 0.916044056, 0.570128798, 0.717265189, 0.400604337, -0.787948966, 0.61543256, 0.0194807649)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.695768595, 0.140619755, 0.0667588413, 0.616926372, -0.623374224, -0.480423152, 0.758363008, 0.634081364, 0.151083753, 0.210445732, -0.457542747, 0.863925457)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.571749091, -0.0358558297, -0.00607961416, 0.826577306, 0.524179399, 0.204954043, -0.478470862, 0.846202672, -0.234535426, -0.296371102, 0.0957973525, 0.950256228)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-5.96046448e-08, 0.189537406, -0.401577502, 0.943018913, 0.204970613, 0.262111425, -0.280833691, 0.912781715, 0.296584189, -0.178459406, -0.353294224, 0.918333054)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(3.7252903e-09, 5.21540642e-08, -7.15255737e-07, 0.985371053, -0.155001402, 0.0708417073, 0.145112813, 0.981079996, 0.128157333, -0.0893659145, -0.116002508, 0.98922056)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.414993614, 0.222824872, 0.274371862, -0.142938986, 0.0952213109, 0.985140264, -0.916658103, 0.362624079, -0.168052837, -0.373237848, -0.92705816, 0.0354522876)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.566310406, -0.0218040347, 0.116119325, -0.252972811, -0.39620769, 0.882623494, 0.591411233, 0.65866518, 0.465180337, -0.765661418, 0.639671624, 0.067697227)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.687512338, 0.110464394, 0.0563702583, 0.645193875, -0.600569248, -0.472272635, 0.738159597, 0.649460137, 0.182543248, 0.197092146, -0.466388494, 0.862343729)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.575209558, -0.0549265146, -0.00624507666, 0.833017707, 0.513975501, 0.204720467, -0.472161859, 0.853326082, -0.221129283, -0.288348407, 0.0875437111, 0.953515351)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-9.31322575e-08, 0.189537227, -0.345513105, 0.96138078, 0.150435448, 0.230469465, -0.214496329, 0.934237659, 0.284940958, -0.172447994, -0.323371589, 0.930426061)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(1.2665987e-07, 2.08616257e-07, 0, 0.985377669, -0.144190982, 0.090773955, 0.13148883, 0.982345819, 0.133069649, -0.10835886, -0.119188093, 0.986941099)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.434406161, 0.231689483, 0.260053456, -0.141778216, 0.177467555, 0.973860502, -0.947254062, 0.261323512, -0.185526013, -0.287417382, -0.948796868, 0.13105689)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.543083549, 0.00830316544, 0.108621746, -0.292948723, -0.508459151, 0.809722424, 0.621680737, 0.542126775, 0.565341949, -0.726425529, 0.669005096, 0.157283917)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.677405477, 0.0690187216, 0.0408975482, 0.688316464, -0.566012263, -0.453707576, 0.702573419, 0.675861955, 0.222713113, 0.180585548, -0.472060293, 0.862872183)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.581083179, -0.0749778748, -0.00576239824, 0.843888104, 0.496141136, 0.204198286, -0.461043298, 0.865246832, -0.196944356, -0.274394065, 0.0720549896, 0.958913982)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-4.47034836e-08, 0.189537168, -0.282333016, 0.978381276, 0.0826306939, 0.189584434, -0.132100567, 0.955024123, 0.265477657, -0.159121081, -0.284782559, 0.945293367)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(1.1920929e-07, 4.47034836e-08, 4.76837158e-07, 0.984817743, -0.132223889, 0.112476736, 0.116273701, 0.983558774, 0.138175815, -0.128897622, -0.122999877, 0.984000206)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.456134826, 0.239508465, 0.243328631, -0.148815542, 0.286905378, 0.946329415, -0.975122154, 0.116415821, -0.188637808, -0.164288998, -0.950858891, 0.262443185)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.511738896, 0.0423628986, 0.0989690572, -0.357885003, -0.643409669, 0.676714301, 0.648849308, 0.349809885, 0.675742447, -0.671500623, 0.6809237, 0.292284101)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.666027009, 0.0190188885, 0.0214467347, 0.74270004, -0.52036339, -0.421447784, 0.649376571, 0.713299692, 0.263654649, 0.163422272, -0.469494879, 0.867679656)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.589208007, -0.0951214433, -0.00471246243, 0.857591748, 0.472271383, 0.203705803, -0.446327448, 0.880165398, -0.161557719, -0.255593777, 0.0476313792, 0.965610206)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-2.18860805e-08, 0.189537168, -0.217023462, 0.989630342, 0.00712575018, 0.143461391, -0.0415821597, 0.970214307, 0.238652796, -0.13748771, -0.242143437, 0.960449815)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(5.21540642e-08, 8.94069672e-08, 8.94069672e-08, 0.983635604, -0.1200343, 0.134360939, 0.100612655, 0.984590292, 0.143035606, -0.14945963, -0.127176523, 0.980554998)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.479337096, 0.245399684, 0.224466324, -0.170895427, 0.410483241, 0.895711124, -0.985165596, -0.0567876734, -0.161938176, -0.0156075172, -0.910098195, 0.41409871)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.474663019, 0.0776639283, 0.0881301165, -0.445414364, -0.758498967, 0.475694627, 0.655327916, 0.0858196616, 0.750453472, -0.610042214, 0.645998716, 0.458840132)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.654277563, -0.0350258946, -0.000102490187, 0.800697327, -0.466566712, -0.375765353, 0.580552101, 0.759069502, 0.294571966, 0.147794366, -0.454014242, 0.878651083)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.599134266, -0.114190996, -0.00326657295, 0.871800125, 0.445482403, 0.203740507, -0.430281669, 0.89518714, -0.116179802, -0.234141603, 0.0136197601, 0.972106993)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-1.21071935e-08, 0.189537182, -0.155578852, 0.992984176, -0.0676295012, 0.0969992578, 0.04630889, 0.977191567, 0.207248896, -0.108803004, -0.201302916, 0.973467529)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(7.4505806e-08, -2.23517418e-08, -1.78813934e-07, 0.981983364, -0.108711332, 0.154565632, 0.0859083086, 0.985361814, 0.147247866, -0.168310568, -0.131316483, 0.976948082)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.502877831, 0.248543814, 0.204010665, -0.209087208, 0.529092371, 0.822401285, -0.968359351, -0.229194418, -0.0987431258, 0.136245623, -0.81702584, 0.56027323)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.435225844, 0.110940397, 0.0773501694, -0.538765907, -0.809144974, 0.234554157, 0.630751908, -0.202864885, 0.748998046, -0.558465242, 0.551480055, 0.619666398)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.643226087, -0.0874683261, -0.0213510394, 0.852912724, -0.410377443, -0.322692633, 0.504380345, 0.807234049, 0.306551099, 0.134686574, -0.424221039, 0.895486474)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.610144854, -0.130943358, -0.00165912509, 0.884121954, 0.419901699, 0.204965517, -0.415913433, 0.907126069, -0.0643316731, -0.212942198, -0.028370766, 0.976652801)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(0, 0.189537197, -0.103604376, 0.98965919, -0.132734001, 0.0543743074, 0.121360317, 0.976903439, 0.175873175, -0.0764627904, -0.167455584, 0.982910097)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(1.1920929e-07, 4.47034836e-08, -4.76837158e-07, 0.9801898, -0.0992380679, 0.171405643, 0.0734861866, 0.985867381, 0.150550008, -0.183923542, -0.134971648, 0.973629713)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.525589705, 0.248399988, 0.182665706, -0.25641498, 0.627351522, 0.735310435, -0.928487659, -0.37129724, -0.00699595921, 0.268629849, -0.684520721, 0.67769438)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.397034377, 0.139127374, 0.0678683519, -0.615339339, -0.788228869, 0.00726203993, 0.584434807, -0.450024545, 0.675213933, -0.528955221, 0.419729888, 0.7375862)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.633880138, -0.132822096, -0.0399337411, 0.892706275, -0.359330446, -0.271950662, 0.433158696, 0.850664139, 0.297899365, 0.124294154, -0.383734614, 0.915040374)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.621419191, -0.144375384, -0.000148385763, 0.892870188, 0.399371445, 0.208051175, -0.406063795, 0.913773596, -0.0114052407, -0.19466652, -0.0742987096, 0.978051424)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-2.98023224e-08, 0.189537138, -0.0650737286, 0.983219922, -0.181539744, 0.0179427341, 0.176896766, 0.972833633, 0.149339333, -0.0445663221, -0.143659383, 0.988623202)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(1.56462193e-07, -2.98023224e-08, -2.38418579e-07, 0.978633046, -0.0922776759, 0.183744863, 0.0642890036, 0.986156523, 0.152847305, -0.195305616, -0.137768626, 0.971017778)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.546539962, 0.244803369, 0.161118805, -0.302142948, 0.700945437, 0.646053612, -0.87850666, -0.467834771, 0.0967290699, 0.370048225, -0.538336396, 0.757138252)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.36309433, 0.160046697, 0.0606380105, -0.663459718, -0.72917074, -0.167723954, 0.53713882, -0.620227635, 0.571664035, -0.520867765, 0.289184898, 0.8031618)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.626954913, -0.16699481, -0.0540461838, 0.918538272, -0.320234418, -0.231813356, 0.377591193, 0.884350002, 0.274499953, 0.117099762, -0.339669108, 0.933226883)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.632222235, -0.153920591, 0.0010574162, 0.897353888, 0.386269808, 0.213429257, -0.40250501, 0.914673269, 0.0369152464, -0.180958301, -0.119032383, 0.976260841)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-8.94069672e-08, 0.189537317, -0.0419099629, 0.977484047, -0.210687786, -0.0116440319, 0.210373297, 0.968771935, 0.131240934, -0.0163704511, -0.130735531, 0.991282105)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(9.68575478e-08, 5.21540642e-08, -1.1920929e-07, 0.977607846, -0.0881208032, 0.191096067, 0.0587683618, 0.986295521, 0.154166862, -0.202062517, -0.139484361, 0.969388962)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.565159976, 0.237913728, 0.139914095, -0.337504089, 0.754677832, 0.562629759, -0.831470013, -0.519214809, 0.197670728, 0.441303551, -0.401095241, 0.80272913)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.33534649, 0.172632813, 0.0561987162, -0.684834659, -0.670891643, -0.284439385, 0.504202902, -0.718076229, 0.479735374, -0.526099682, 0.185124278, 0.830029011)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.622789979, -0.187793493, -0.0626862049, 0.932360888, -0.297077179, -0.206029445, 0.34307003, 0.906796813, 0.244995072, 0.114044413, -0.299106479, 0.947380185)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.642023921, -0.159470677, 0.00182148814, 0.897617698, 0.381283432, 0.221145391, -0.405686527, 0.910823882, 0.0762809366, -0.172339782, -0.158186644, 0.972253084)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(0, 0.189537197, -0.0343365669, 0.975014687, -0.219427466, -0.0346115716, 0.222049028, 0.967179954, 0.123520002, 0.00637193862, -0.128119275, 0.991738319)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(1.78813934e-07, -3.7252903e-08, 1.1920929e-07, 0.977259159, -0.0867670923, 0.193484232, 0.0569665134, 0.986335278, 0.154588133, -0.204253525, -0.14005053, 0.96884793)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.581227243, 0.228079736, 0.119405508, -0.357586205, 0.79629457, 0.487900734, -0.795444191, -0.533429205, 0.287613928, 0.489285976, -0.285251081, 0.824154794)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.314694464, 0.176750183, 0.0547261834, -0.685753644, -0.63605988, -0.353793174, 0.490901053, -0.763082027, 0.420383394, -0.537362278, 0.114601851, 0.835528731)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.621430874, -0.194651127, -0.0655461252, 0.93680048, -0.290799707, -0.194526121, 0.330100656, 0.918891311, 0.216038451, 0.115924351, -0.266597837, 0.956810832)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.650540471, -0.161242127, 0.00207972527, 0.894008398, 0.383963078, 0.230913982, -0.415109158, 0.903766513, 0.104358643, -0.16862227, -0.189151913, 0.967361391)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(-1.11758709e-08, 0.189537242, -0.0466778278, 0.974624395, -0.217015266, -0.0548787154, 0.222308785, 0.967077494, 0.123854622, 0.0261936281, -0.132911757, 0.990781724)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(1.49011612e-08, -8.19563866e-08, -4.76837158e-07, 0.978274345, -0.0876055211, 0.18789506, 0.0588118024, 0.986367702, 0.153687865, -0.198797494, -0.139298424, 0.970090508)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.596162379, 0.213605642, 0.0964719057, -0.363650531, 0.840993643, 0.400609732, -0.77158314, -0.512889624, 0.376302451, 0.521936536, -0.172261208, 0.835409164)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.298480749, 0.171664655, 0.0586566329, -0.662913859, -0.628652513, -0.406621516, 0.509272993, -0.776728511, 0.370585918, -0.548804402, 0.0385851488, 0.835059822)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.623009682, -0.187385917, -0.062461406, 0.935559571, -0.296586424, -0.191741735, 0.331345171, 0.925011933, 0.185912028, 0.122224316, -0.237464488, 0.963676274)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.658983648, -0.149228454, 0.00309759378, 0.887182474, 0.392337114, 0.242855921, -0.429686993, 0.894289613, 0.124961644, -0.168156251, -0.215215728, 0.961980104)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(1.86264515e-08, 0.189537197, -0.0838198662, 0.974259079, -0.212295249, -0.0758287609, 0.220724687, 0.966708601, 0.129441515, 0.0458244905, -0.142846838, 0.988683403)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(4.47034836e-08, -6.70552254e-08, 2.38418579e-07, 0.981132269, -0.0901558697, 0.171030447, 0.0643376559, 0.986451268, 0.150912359, -0.182318807, -0.137061268, 0.973639607)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.611214876, 0.19264245, 0.0680840313, -0.358058721, 0.892447889, 0.274464846, -0.758897185, -0.449414164, 0.471276879, 0.543938458, -0.0395457558, 0.83819288)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.284086406, 0.156361997, 0.0704865754, -0.608124793, -0.640989125, -0.468313187, 0.571125507, -0.763007879, 0.302712291, -0.551361978, -0.0833787993, 0.830089152)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.627759933, -0.165514112, -0.0531771481, 0.931035697, -0.309825242, -0.192823157, 0.340153694, 0.928156734, 0.151064813, 0.13216655, -0.206236154, 0.969535232)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.668563962, -0.113072097, 0.00616168976, 0.877594471, 0.404675454, 0.257032365, -0.448431253, 0.882524371, 0.141634807, -0.169521153, -0.239559323, 0.955967546)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(1.49011612e-08, 0.189537197, -0.144210577, 0.973902822, -0.205275506, -0.0968260989, 0.217524678, 0.965953887, 0.140057474, 0.0647791699, -0.15746443, 0.985397696)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(8.94069672e-08, 1.49011612e-08, -2.38418579e-07, 0.985140979, -0.094386667, 0.143487036, 0.0732282251, 0.986542583, 0.146189645, -0.155354425, -0.133510083, 0.97879523)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.625975728, 0.165894151, 0.0351284146, -0.339223534, 0.934748113, 0.105703853, -0.756706715, -0.337899566, 0.5596596, 0.558858097, 0.109862715, 0.821953654)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.271857262, 0.131478757, 0.0897214413, -0.517973661, -0.66095674, -0.542991102, 0.671774507, -0.707292318, 0.220128834, -0.529549301, -0.250746697, 0.81037271)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.635485351, -0.129954338, -0.0380815268, 0.923457384, -0.329376906, -0.196817786, 0.355080396, 0.927976847, 0.113035426, 0.145411044, -0.174269602, 0.973902345)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.679002404, -0.054284811, 0.0111439824, 0.865658939, 0.41997391, 0.272500932, -0.469985008, 0.869255126, 0.153328747, -0.172478661, -0.260801852, 0.949859798)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(2.60770321e-08, 0.189537197, -0.22319892, 0.973543942, -0.196302459, -0.11695122, 0.213114202, 0.964682877, 0.154820368, 0.0824292153, -0.175648391, 0.980995953)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(6.33299351e-08, 2.23517418e-08, -2.98023224e-08, 0.98917973, -0.100070328, 0.107282579, 0.0846636668, 0.986578107, 0.139627621, -0.119815201, -0.129033864, 0.984375298)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.63989526, 0.134980142, -0.000653356314, -0.306468993, 0.946851194, -0.0977226868, -0.761531174, -0.182294399, 0.621963799, 0.571092844, 0.265031487, 0.776924253)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.262063593, 0.0989333391, 0.114880443, -0.393039227, -0.66871959, -0.631137133, 0.794476807, -0.592537642, 0.133062869, -0.462954372, -0.449124992, 0.764172912)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.645590186, -0.0834425092, -0.0183361173, 0.913421094, -0.353107244, -0.202428341, 0.373806953, 0.924550772, 0.0739892349, 0.161029071, -0.143252313, 0.976498067)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.689800501, 0.0226060748, 0.0176598132, 0.852335811, 0.436644167, 0.287863582, -0.492277384, 0.855668843, 0.159667984, -0.176597357, -0.277799755, 0.944267333)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(1.11758709e-08, 0.189537406, -0.312679827, 0.973185599, -0.186149031, -0.135123327, 0.20806767, 0.962856233, 0.172092691, 0.0980694294, -0.195592955, 0.975769341)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(2.60770321e-08, -7.4505806e-08, -2.38418579e-07, 0.992090762, -0.106700882, 0.0661132559, 0.0973245949, 0.986502886, 0.131681636, -0.0792714506, -0.124205656, 0.989084959)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.652337909, 0.102473259, -0.0366681665, -0.262697667, 0.913320959, -0.311183304, -0.767619371, -0.002424123, 0.640901446, 0.584594369, 0.407233506, 0.701719582)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.254796028, 0.0620640218, 0.143380523, -0.246972412, -0.642871916, -0.725065708, 0.907529235, -0.415752828, 0.0594994873, -0.339698672, -0.64332372, 0.686104655)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.657035589, -0.0307532549, 0.0040306747, 0.902009845, -0.378130704, -0.208315551, 0.393531024, 0.918582678, 0.0365996324, 0.177515551, -0.114991844, 0.97737664)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.700271964, 0.109712601, 0.025041908, 0.839027166, 0.452833802, 0.301620185, -0.512996733, 0.843115211, 0.161218435, -0.181295156, -0.289997131, 0.939698875)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(3.35276127e-08, 0.189537168, -0.402160406, 0.972850919, -0.175935715, -0.150358677, 0.203041822, 0.960619748, 0.189693823, 0.111063592, -0.2150729, 0.97026211)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(6.89178705e-08, 4.84287739e-08, -5.96046448e-07, 0.993224263, -0.113517918, 0.0248871259, 0.109639838, 0.986305177, 0.123211749, -0.0385330468, -0.119648293, 0.99206835)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.662727594, 0.0715163946, -0.0698937178, -0.215160266, 0.837984204, -0.501486599, -0.769966662, 0.17030859, 0.614935994, 0.600714207, 0.518437684, 0.608576238)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.249889508, 0.0251954943, 0.171881378, -0.10716556, -0.576989293, -0.809690595, 0.978796184, -0.204212934, 0.0159757808, -0.174567118, -0.790809989, 0.586639583)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.668482542, 0.0219371319, 0.026398778, 0.890649557, -0.401469469, -0.213460937, 0.411650449, 0.911334932, 0.00357492082, 0.19309929, -0.091055125, 0.976945043)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.70966047, 0.196818173, 0.0324240625, 0.827182829, 0.4669168, 0.312661618, -0.530279338, 0.832706809, 0.159383565, -0.18593654, -0.297637701, 0.936397195)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(2.60770321e-08, 0.189537406, -0.481148899, 0.972574353, -0.1668621, -0.162037551, 0.198636681, 0.958306193, 0.205409139, 0.121006563, -0.231962293, 0.965168893)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(6.70552254e-08, 2.98023224e-08, -1.1920929e-07, 0.99274689, -0.119675502, -0.0114617273, 0.120197102, 0.986029625, 0.115318835, -0.0024992153, -0.11586009, 0.99326247)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.670696378, 0.0450991839, -0.0975887179, -0.172346935, 0.744336843, -0.645181656, -0.767408371, 0.309175938, 0.561689019, 0.617560565, 0.591923118, 0.517924786)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.246942699, -0.00734975049, 0.197039247, 0.00113572541, -0.488994688, -0.872285843, 0.999977231, -0.00524195796, 0.00424046768, -0.00664612185, -0.872271001, 0.488977939)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.678587437, 0.0684471726, 0.0461420119, 0.880726099, -0.420801044, -0.217366233, 0.426373512, 0.904255509, -0.0229721535, 0.206221282, -0.072447136, 0.975819767)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.717310429, 0.273709953, 0.0389408767, 0.817830861, 0.477891833, 0.32058093, -0.543199778, 0.824998379, 0.155921668, -0.189964995, -0.301657349, 0.934299946)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(7.4505806e-08, 0.189537197, -0.541539431, 0.972383797, -0.159897208, -0.170007885, 0.19528468, 0.956322968, 0.21750927, 0.127803311, -0.244702429, 0.961138427)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(9.49949026e-08, 2.23517418e-08, 2.38418579e-07, 0.991450667, -0.124462955, -0.0391746089, 0.128056109, 0.985755324, 0.109032728, 0.0250460505, -0.113117129, 0.993265986)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.676148117, 0.0253857374, -0.117891878, -0.140048444, 0.660366416, -0.73776865, -0.762328267, 0.403576672, 0.505946219, 0.631856084, 0.633278906, 0.446895838)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.245427161, -0.0322318301, 0.21627444, 0.0700204894, -0.407520592, -0.910507619, 0.989425778, 0.144593745, 0.0113727534, 0.127018884, -0.901676118, 0.413336009)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.686312079, 0.104007781, 0.0612383485, 0.873231113, -0.434830338, -0.219977289, 0.436880052, 0.898543537, -0.0418991335, 0.215878129, -0.0595161989, 0.974604845)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.722818375, 0.332498491, 0.0439229012, 0.811369002, 0.485452175, 0.325601846, -0.551752925, 0.81996578, 0.15239723, -0.193000644, -0.303302497, 0.93314451)},"Quad","Out",0.001)
+	swait()
+	SetTween(RJ,{C0 = RJC0 * CF.N(2.98023224e-08, 0.189537197, -0.578681469, 0.97228545, -0.15561156, -0.174487978, 0.193223163, 0.955011129, 0.224985778, 0.131627575, -0.252465487, 0.95861119)},"Quad","Out",0.001)
+	SetTween(NK,{C0 = NKC0 * CF.N(8.19563866e-08, 6.70552254e-08, -1.1920929e-07, 0.990254819, -0.127438635, -0.0561688468, 0.132793739, 0.985559642, 0.105062515, 0.0419687256, -0.111497521, 0.992878139)},"Quad","Out",0.001)
+	SetTween(LS,{C0 = LSC0 * CF.N(-0.679218531, 0.0134752542, -0.129994139, -0.120505661, 0.605112255, -0.786967397, -0.757952392, 0.45586127, 0.466581851, 0.641082406, 0.652709544, 0.403712422)},"Quad","Out",0.001)
+	SetTween(RS,{C0 = RSC0 * CF.N(0.244820893, -0.0475355089, 0.228104889, 0.1056052, -0.35334006, -0.929515064, 0.97226876, 0.232833847, 0.0219543502, 0.208665013, -0.906056941, 0.368130147)},"Quad","Out",0.001)
+	SetTween(LH,{C0 = LHC0 * CF.N(-0.691064596, 0.125877321, 0.0705215037, 0.868664086, -0.443152517, -0.221447125, 0.443049043, 0.894931138, -0.0529708453, 0.221653834, -0.0520982742, 0.97373265)},"Quad","Out",0.001)
+	SetTween(RH,{C0 = RHC0 * CF.N(0.72605896, 0.368653417, 0.0469870567, 0.807706475, 0.489756405, 0.328251719, -0.556455076, 0.817246318, 0.149886891, -0.194854125, -0.303722143, 0.932622552)},"Quad","Out",0.001)
+	swait()
+	
+	
+	
+	
+	
+end
