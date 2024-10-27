@@ -1,7 +1,7 @@
 --https://v3rmillion.net/showthread.php?tid=1063479
 --You do need to be wearing the hat yourself
 local hatid = "HatIdHere"
-local hatname = game:GetObjects("rbxassetid://".. hatid)[1].Name
+local hatname = game:GetObjects("rbxassetid://"17843565860 hatid)[1].Name
 local victimname = "VictimNameHere"
 
 local plrs = game:GetService("Players")
